@@ -131,7 +131,8 @@ namespace AnodyneArchipelago
 
                 string mapName = GetMapNameForDungeon(dungeonName);
                 GlobalState.inventory.AddMapKey(mapName, 1);
-            } else if (itemName == "Green Key")
+            }
+            else if (itemName == "Green Key")
             {
                 GlobalState.inventory.BigKeyStatus[0] = true;
             }
@@ -142,9 +143,15 @@ namespace AnodyneArchipelago
             else if (itemName == "Red Key")
             {
                 GlobalState.inventory.BigKeyStatus[1] = true;
-            } else if (itemName == "Jump Shoes")
+            }
+            else if (itemName == "Jump Shoes")
             {
                 GlobalState.inventory.CanJump = true;
+            }
+            else if (itemName == "Health Cicada")
+            {
+                GlobalState.MAX_HEALTH += 1;
+                GlobalState.CUR_HEALTH = GlobalState.MAX_HEALTH;
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using AnodyneSharp.Entities.Gadget.Treasures;
+﻿using AnodyneSharp.Entities;
+using AnodyneSharp.Entities.Gadget.Treasures;
+using AnodyneSharp.Registry;
 using Microsoft.Xna.Framework;
 
 namespace AnodyneArchipelago
@@ -14,7 +16,23 @@ namespace AnodyneArchipelago
 
         public override void GetTreasure()
         {
-            base.GetTreasure();
+            if (_location == "Street - Broom Chest")
+            {
+                BroomTreasure broomTreasure = new("broom-icon", this.Position, BroomType.Normal);
+                broomTreasure.GetTreasure();
+                GlobalState.SpawnEntity(broomTreasure);
+            }
+            else if (_location == "Street - Key Chest")
+            {
+                KeyTreasure keyTreasure = new(this.Position);
+                keyTreasure.GetTreasure();
+                GlobalState.SpawnEntity(keyTreasure);
+            }
+            else
+            {
+                base.GetTreasure();
+            }
+            
             ArchipelagoManager.SendLocation(_location);
         }
     }
