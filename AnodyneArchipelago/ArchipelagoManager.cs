@@ -171,6 +171,10 @@ namespace AnodyneArchipelago
             {
                 GlobalState.events.SetEvent("StatueMoved_Grotto", 1);
             }
+            else if (itemName == "Progressive Red Grotto")
+            {
+                GlobalState.events.IncEvent("ProgressiveRedGrotto");
+            }
         }
     }
 }

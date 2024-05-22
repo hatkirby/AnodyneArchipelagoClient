@@ -1,5 +1,6 @@
 ﻿using AnodyneSharp;
 using AnodyneSharp.Entities;
+using AnodyneSharp.Entities.Events;
 using AnodyneSharp.Entities.Gadget;
 using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Entities.Interactive;
@@ -51,6 +52,12 @@ namespace AnodyneArchipelago
     {
         static void Prefix()
         {
+            // Handle Red Grotto stuff.
+            GlobalState.events.SetEvent("red_cave_l_ss", 999);
+            GlobalState.events.SetEvent("red_cave_n_ss", 999);
+            GlobalState.events.SetEvent("red_cave_r_ss", 999);
+
+            // Connect to archipelago.
             Plugin.Instance.Log.LogInfo("Connecting to Archipelago!");
 
             ArchipelagoManager.Connect("localhost:38281", "Anodyne", "");
@@ -124,10 +131,12 @@ namespace AnodyneArchipelago
             if (preset.Frame == 0)
             {
                 ArchipelagoManager.SendLocation("Temple of the Seeing One - Green Key");
-            } else if (preset.Frame == 1)
+            }
+            else if (preset.Frame == 1)
             {
                 ArchipelagoManager.SendLocation("Red Grotto - Red Key");
-            } else if (preset.Frame == 2)
+            }
+            else if (preset.Frame == 2)
             {
                 ArchipelagoManager.SendLocation("Mountain Cavern - Blue Key");
             }
@@ -226,6 +235,29 @@ namespace AnodyneArchipelago
                 }
 
                 __result.Position += Entity.FacingDirection(moveDir) * 32f;
+            }
+            else if (__instance.Type.FullName.StartsWith("AnodyneSharp.Entities.Decorations.RedCave"))
+            {
+                string side = __instance.Type.FullName.Substring(41);
+                int requiredGrottos = 0;
+                if (side == "Left")
+                {
+                    requiredGrottos = 1;
+                }
+                else if (side == "Right")
+                {
+                    requiredGrottos = 2;
+                }
+                else if (side == "North")
+                {
+                    requiredGrottos = 3;
+                }
+
+                if (GlobalState.events.GetEvent("ProgressiveRedGrotto") < requiredGrottos)
+                {
+                    __result.exists = false;
+                    GlobalState.SpawnEntity((Entity)new DoorToggle(__result.Position, __result.width, __result.height));
+                }
             }
         }
     }
