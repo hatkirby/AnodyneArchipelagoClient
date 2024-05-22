@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnodyneArchipelago", "AnodyneArchipelago.csproj", "{88711B83-00FB-49C9-8963-CC3461B8F964}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88711B83-00FB-49C9-8963-CC3461B8F964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88711B83-00FB-49C9-8963-CC3461B8F964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88711B83-00FB-49C9-8963-CC3461B8F964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88711B83-00FB-49C9-8963-CC3461B8F964}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BADFA823-EB94-44FE-9C42-85D7E95E7A95}
+	EndGlobalSection
+EndGlobal
