@@ -153,6 +153,10 @@ namespace AnodyneArchipelago
                 GlobalState.MAX_HEALTH += 1;
                 GlobalState.CUR_HEALTH = GlobalState.MAX_HEALTH;
             }
+            else if (itemName == "Swap")
+            {
+                GlobalState.inventory.HasTransformer = true;
+            }
         }
     }
 }
