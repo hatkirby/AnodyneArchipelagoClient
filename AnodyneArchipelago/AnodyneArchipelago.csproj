@@ -32,5 +32,8 @@
     <Reference Include="BepInEx.NET.Common">
       <HintPath>..\..\BepInEx\bin\NET.Framework\net462\BepInEx.NET.Common.dll</HintPath>
     </Reference>
+    <Reference Include="FNA">
+      <HintPath>..\..\..\SteamLibrary\steamapps\common\Anodyne\Remake\FNA.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
