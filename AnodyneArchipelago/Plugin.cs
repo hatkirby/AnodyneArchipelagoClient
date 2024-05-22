@@ -9,6 +9,7 @@ using BepInEx;
 using BepInEx.NET.Common;
 using HarmonyLib;
 using HarmonyLib.Tools;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -190,6 +191,41 @@ namespace AnodyneArchipelago
             if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
             {
                 ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(EntityPreset), nameof(EntityPreset.Create))]
+    class EntityPresetCreatePatch
+    {
+        static void Postfix(EntityPreset __instance, Entity __result)
+        {
+            if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.DungeonStatue")
+            {
+                __result.Position = __instance.Position;
+
+                string eventName = "StatueMoved_";
+                Facing moveDir = Facing.RIGHT;
+                if (__instance.Frame == 0)
+                {
+                    eventName += "Temple";
+                    moveDir = Facing.UP;
+                }
+                else if (__instance.Frame == 1)
+                {
+                    eventName += "Grotto";
+                }
+                else if (__instance.Frame == 2)
+                {
+                    eventName += "Mountain";
+                }
+
+                if (GlobalState.events.GetEvent(eventName) == 0)
+                {
+                    return;
+                }
+
+                __result.Position += Entity.FacingDirection(moveDir) * 32f;
             }
         }
     }

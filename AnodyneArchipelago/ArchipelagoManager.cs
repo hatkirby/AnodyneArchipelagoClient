@@ -1,4 +1,5 @@
 ﻿using AnodyneSharp.Entities;
+using AnodyneSharp.Entities.Enemy.Redcave;
 using AnodyneSharp.Registry;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
@@ -156,6 +157,19 @@ namespace AnodyneArchipelago
             else if (itemName == "Swap")
             {
                 GlobalState.inventory.HasTransformer = true;
+            }
+            else if (itemName == "Temple of the Seeing One Statue")
+            {
+                // TODO: This and the other two: move while on the same map.
+                GlobalState.events.SetEvent("StatueMoved_Temple", 1);
+            }
+            else if (itemName == "Mountain Cavern Statue")
+            {
+                GlobalState.events.SetEvent("StatueMoved_Mountain", 1);
+            }
+            else if (itemName == "Red Grotto Statue")
+            {
+                GlobalState.events.SetEvent("StatueMoved_Grotto", 1);
             }
         }
     }
