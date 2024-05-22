@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Archipelago.MultiClient.Net" Version="5.0.6" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
   </ItemGroup>
   
@@ -20,13 +21,16 @@
   
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\BepInEx\Runtimes\NET\BepInEx.NET.Common\bin\Debug\net462\0Harmony.dll</HintPath>
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="AnodyneSharp">
+      <HintPath>..\..\..\SteamLibrary\steamapps\common\Anodyne\Remake\AnodyneSharp.exe</HintPath>
     </Reference>
     <Reference Include="BepInEx.Core">
-      <HintPath>..\BepInEx\Runtimes\NET\BepInEx.NET.Common\bin\Debug\net462\BepInEx.Core.dll</HintPath>
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\BepInEx.Core.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.NET.Common">
-      <HintPath>..\BepInEx\Runtimes\NET\BepInEx.NET.Common\bin\Debug\net462\BepInEx.NET.Common.dll</HintPath>
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\BepInEx.NET.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
