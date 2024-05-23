@@ -198,7 +198,7 @@ namespace AnodyneArchipelago
         {
             if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.DungeonStatue")
             {
-                __result.Position = __instance.Position;
+                __result.Position = __instance.Position + new Vector2(1f, 32f);
 
                 string eventName = "StatueMoved_";
                 Facing moveDir = Facing.RIGHT;
@@ -216,12 +216,10 @@ namespace AnodyneArchipelago
                     eventName += "Mountain";
                 }
 
-                if (GlobalState.events.GetEvent(eventName) == 0)
+                if (GlobalState.events.GetEvent(eventName) > 0)
                 {
-                    return;
+                    __result.Position += Entity.FacingDirection(moveDir) * 32f;
                 }
-
-                __result.Position += Entity.FacingDirection(moveDir) * 32f;
             }
             else if (__instance.Type.FullName.StartsWith("AnodyneSharp.Entities.Decorations.RedCave"))
             {
