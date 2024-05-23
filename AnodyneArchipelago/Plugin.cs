@@ -244,6 +244,12 @@ namespace AnodyneArchipelago
                     GlobalState.SpawnEntity((Entity)new DoorToggle(__result.Position, __result.width, __result.height));
                 }
             }
+            else if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.Npc.MitraCliff")
+            {
+                // We want to get rid of this scene entirely.
+                __instance.Alive = false;
+                __result.exists = false;
+            }
         }
     }
 
