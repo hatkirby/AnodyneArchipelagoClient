@@ -72,15 +72,15 @@ namespace AnodyneArchipelago
             {new Guid("5ffe5efb-6e92-da36-302a-7b75d3e72085"), "Red Grotto - Widen Upgrade Chest" },
             {new Guid("ae87f1d5-57e0-1749-7e1e-1d0bcc1bcab4"), "Red Grotto - Middle Cave Left Chest" },
             {new Guid("72bad10e-598f-f238-0103-60e1b36f6240"), "Red Grotto - Middle Cave Right Chest" },
-            // Middle Left Tentacle
-            // Middle Right Tentacle
+            {new Guid("09241266-9657-6152-bb37-5ff0a7fddcf9"), "Red Grotto - Middle Cave Left Tentacle" },
+            {new Guid("95d6cf28-66df-54a5-0aec-6b54f56a2edc"), "Red Grotto - Middle Cave Right Tentacle" },
             {new Guid("ed7d4d0f-c29d-d5aa-289a-b6c6ab8a041e"), "Red Grotto - Middle Cave Middle Chest" },
             {new Guid("4a9dc50d-8739-9ad8-2cb1-82ece29d3b6f"), "Red Grotto - Left Cave Rapids Chest" },
             {new Guid("cda1ff45-0f88-4855-b0ec-a9b42376c33f"), "Red Grotto - Left Cave Sticky Chest" },
-            // Left Tentacle
+            {new Guid("a0b1ccc8-849a-b61d-7742-bfaf11013b2a"), "Red Grotto - Left Cave Tentacle" },
             {new Guid("83286bfb-ffda-237e-ba57-ca2e532e1dc7"), "Red Grotto - Right Cave Four Shooter Chest" },
             {new Guid("a7672339-f3fb-c49e-33ce-42a49d7e4533"), "Red Grotto - Right Cave Slasher Chest" },
-            // Right Tentacle
+            {new Guid("ed3b58c5-9191-013c-6935-777766e39a65"), "Red Grotto - Right Cave Tentacle" },
             {new Guid("0504f29a-042a-bbc7-9fd4-5559e8ec64d0"), "Red Grotto - Top Cave Slasher Chest" },
             {new Guid("082409e1-1d7e-3a22-9059-d5d9d0626fb1"), "Red Grotto - Health Cicada" },
             {new Guid("622180eb-bc49-c327-d598-af9714b5ecb3"), "Red Grotto - Boss Chest" },

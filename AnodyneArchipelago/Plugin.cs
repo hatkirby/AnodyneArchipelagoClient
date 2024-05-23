@@ -1,4 +1,5 @@
-﻿using AnodyneSharp;
+﻿using AnodyneArchipelago.Patches;
+using AnodyneSharp;
 using AnodyneSharp.Entities;
 using AnodyneSharp.Entities.Events;
 using AnodyneSharp.Entities.Gadget;
@@ -69,10 +70,8 @@ namespace AnodyneArchipelago
     {
         static void Prefix(TreasureChest __instance)
         {
-            Type chestType = typeof(TreasureChest);
-            FieldInfo presetField = chestType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(__instance) as EntityPreset;
-            Plugin.Instance.Log.LogInfo($"Touched chest: {preset.EntityID.ToString()}");
+            string entityId = PatchHelper.GetEntityPreset(typeof(TreasureChest), __instance).EntityID.ToString();
+            Plugin.Instance.Log.LogInfo($"Touched chest: {entityId}");
         }
     }
 
@@ -81,15 +80,12 @@ namespace AnodyneArchipelago
     {
         static bool Prefix(TreasureChest __instance)
         {
-            Type chestType = typeof(TreasureChest);
-            FieldInfo presetField = chestType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(__instance) as EntityPreset;
-
-            if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
+            Guid entityId = PatchHelper.GetEntityPreset(typeof(TreasureChest), __instance).EntityID;
+            if (Locations.LocationsByGuid.ContainsKey(entityId))
             {
-                BaseTreasure treasure = new ArchipelagoTreasure(Locations.LocationsByGuid[preset.EntityID], __instance.Position);
+                BaseTreasure treasure = new ArchipelagoTreasure(Locations.LocationsByGuid[entityId], __instance.Position);
 
-                FieldInfo treasureField = chestType.GetField("_treasure", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo treasureField = typeof(TreasureChest).GetField("_treasure", BindingFlags.NonPublic | BindingFlags.Instance);
                 treasureField.SetValue(__instance, treasure);
 
                 return false;
@@ -105,15 +101,12 @@ namespace AnodyneArchipelago
         // We basically just rewrite this method, because we need to get rid of the part that adds the key to the inventory.
         static bool Prefix(Big_Key __instance, ref bool __result)
         {
-            Type keyType = typeof(Big_Key);
-            FieldInfo presetField = keyType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(__instance) as EntityPreset;
+            MethodInfo statesMethod = typeof(Big_Key).GetMethod("States", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            MethodInfo statesMethod = keyType.GetMethod("States", BindingFlags.NonPublic | BindingFlags.Instance);
-
+            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Big_Key), __instance);
             preset.Alive = false;
             __instance.Solid = false;
-            GlobalState.StartCutscene = (System.Collections.Generic.IEnumerator<AnodyneSharp.States.CutsceneState.CutsceneEvent>)statesMethod.Invoke(__instance, new object[] { });
+            GlobalState.StartCutscene = (IEnumerator<AnodyneSharp.States.CutsceneState.CutsceneEvent>)statesMethod.Invoke(__instance, new object[] { });
             __result = true;
             return false;
         }
@@ -124,9 +117,7 @@ namespace AnodyneArchipelago
     {
         static void Postfix(Big_Key __instance)
         {
-            Type keyType = typeof(Big_Key);
-            FieldInfo presetField = keyType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(__instance) as EntityPreset;
+            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Big_Key), __instance);
 
             if (preset.Frame == 0)
             {
@@ -152,9 +143,7 @@ namespace AnodyneArchipelago
             FieldInfo childField = hcsType.GetField("_child", BindingFlags.NonPublic | BindingFlags.Instance);
             HealthCicada healthCicada = (HealthCicada)childField.GetValue(__instance);
 
-            Type cicadaType = typeof(HealthCicada);
-            FieldInfo presetField = cicadaType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(healthCicada) as EntityPreset;
+            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(HealthCicada), healthCicada);
             Plugin.Instance.Log.LogInfo($"Touched cicada: {preset.EntityID.ToString()}");
         }
     }
@@ -184,15 +173,13 @@ namespace AnodyneArchipelago
 
         static IEnumerator<string> StateLogic(HealthCicada healthCicada)
         {
-            Type cicadaType = typeof(HealthCicada);
-            FieldInfo presetField = cicadaType.GetField("_preset", BindingFlags.NonPublic | BindingFlags.Instance);
-            EntityPreset preset = presetField.GetValue(healthCicada) as EntityPreset;
+            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(HealthCicada), healthCicada);
 
             while (!MathUtilities.MoveTo(ref healthCicada.opacity, 0.0f, 0.6f))
                 yield return "FadingOut";
             preset.Alive = false;
 
-            FieldInfo sentinelField = cicadaType.GetField("_sentinel", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo sentinelField = typeof(HealthCicada).GetField("_sentinel", BindingFlags.NonPublic | BindingFlags.Instance);
             HealthCicadaSentinel sentinel = (HealthCicadaSentinel)sentinelField.GetValue(healthCicada);
 
             sentinel.exists = false;
@@ -258,6 +245,31 @@ namespace AnodyneArchipelago
                     __result.exists = false;
                     GlobalState.SpawnEntity((Entity)new DoorToggle(__result.Position, __result.width, __result.height));
                 }
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    class BreakChainPatch
+    {
+        static MethodInfo TargetMethod()
+        {
+            return typeof(Red_Pillar).GetNestedType("Chain", BindingFlags.NonPublic).GetMethod("Collided");
+        }
+
+        static void Postfix(object __instance)
+        {
+            Type chainType = typeof(Red_Pillar).GetNestedType("Chain", BindingFlags.NonPublic);
+            FieldInfo parentField = chainType.GetField("_parent", BindingFlags.NonPublic | BindingFlags.Instance);
+            
+            Red_Pillar redPillar = (Red_Pillar)parentField.GetValue(__instance);
+            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Red_Pillar), redPillar);
+
+            Plugin.Instance.Log.LogInfo($"Broke red chain: {preset.EntityID.ToString()}");
+
+            if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
+            {
+                ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
             }
         }
     }
