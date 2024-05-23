@@ -6,6 +6,7 @@ using AnodyneSharp.Entities.Gadget;
 using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Entities.Interactive;
 using AnodyneSharp.Registry;
+using AnodyneSharp.States;
 using AnodyneSharp.Utilities;
 using BepInEx;
 using BepInEx.NET.Common;
@@ -23,6 +24,7 @@ namespace AnodyneArchipelago
     public class Plugin : BasePlugin
     {
         public static Plugin Instance = null;
+        public static Player Player = null;
 
         public override void Load()
         {
@@ -48,11 +50,15 @@ namespace AnodyneArchipelago
         }
     }
 
-    [HarmonyPatch(typeof(AnodyneSharp.States.PlayState), nameof(AnodyneSharp.States.PlayState.Create))]
+    [HarmonyPatch(typeof(PlayState), nameof(PlayState.Create))]
     class PlayStateCreatePatch
     {
-        static void Prefix()
+        static void Prefix(PlayState __instance)
         {
+            // Get player for later access.
+            FieldInfo playerField = typeof(PlayState).GetField("_player", BindingFlags.NonPublic | BindingFlags.Instance);
+            Plugin.Player = (Player)playerField.GetValue(__instance);
+
             // Handle Red Grotto stuff.
             GlobalState.events.SetEvent("red_cave_l_ss", 999);
             GlobalState.events.SetEvent("red_cave_n_ss", 999);

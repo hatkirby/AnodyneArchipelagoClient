@@ -1,5 +1,6 @@
 ﻿using AnodyneSharp.Entities;
 using AnodyneSharp.Entities.Enemy.Redcave;
+using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
 using Archipelago.MultiClient.Net;
@@ -188,6 +189,12 @@ namespace AnodyneArchipelago
             else if (itemName == "Progressive Red Grotto")
             {
                 GlobalState.events.IncEvent("ProgressiveRedGrotto");
+            }
+            else if (itemName == "Card")
+            {
+                CardTreasure cardTreasure = new(Plugin.Player.Position, GlobalState.inventory.CardCount);
+                cardTreasure.GetTreasure();
+                GlobalState.SpawnEntity(cardTreasure);
             }
 
             string message;
