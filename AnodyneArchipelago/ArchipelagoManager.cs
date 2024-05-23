@@ -169,9 +169,21 @@ namespace AnodyneArchipelago
                 GlobalState.MAX_HEALTH += 1;
                 GlobalState.CUR_HEALTH = GlobalState.MAX_HEALTH;
             }
+            else if (itemName == "Heal")
+            {
+                GlobalState.CUR_HEALTH = GlobalState.MAX_HEALTH;
+            }
             else if (itemName == "Swap")
             {
                 GlobalState.inventory.HasTransformer = true;
+            }
+            else if (itemName == "Extend")
+            {
+                GlobalState.inventory.HasLengthen = true;
+            }
+            else if (itemName == "Widen")
+            {
+                GlobalState.inventory.HasWiden = true;
             }
             else if (itemName == "Temple of the Seeing One Statue")
             {
