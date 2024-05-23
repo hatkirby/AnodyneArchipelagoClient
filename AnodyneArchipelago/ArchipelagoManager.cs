@@ -1,8 +1,10 @@
 ﻿using AnodyneSharp.Entities;
 using AnodyneSharp.Entities.Enemy.Redcave;
 using AnodyneSharp.Registry;
+using AnodyneSharp.Sounds;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using System;
@@ -24,6 +26,7 @@ namespace AnodyneArchipelago
             try
             {
                 _session = ArchipelagoSessionFactory.CreateSession(url);
+                _session.MessageLog.OnMessageReceived += OnMessageReceived;
                 result = _session.TryConnectAndLogin("Anodyne", slotName, ItemsHandlingFlags.AllItems, null, null, null, password == "" ? null : password);
             }
             catch (Exception e)
@@ -100,7 +103,7 @@ namespace AnodyneArchipelago
                 }
             }
 
-            if (_itemsToCollect.Count > 0)
+            if (_itemsToCollect.Count > 0 && (GlobalState.Dialogue == null || GlobalState.Dialogue == "") && !GlobalState.ScreenTransition)
             {
                 NetworkItem item = _itemsToCollect.Dequeue();
                 HandleItem(item);
@@ -123,6 +126,17 @@ namespace AnodyneArchipelago
 
         private static void HandleItem(NetworkItem item)
         {
+            if (item.Player == _session.ConnectionInfo.Slot)
+            {
+                string itemKey = $"ArchipelagoLocation-{item.Location}";
+                if (GlobalState.events.GetEvent(itemKey) > 0)
+                {
+                    return;
+                }
+
+                GlobalState.events.SetEvent(itemKey, 1);
+            }
+
             string itemName = _session.Items.GetItemName(item.Item);
 
             if (itemName.StartsWith("Small Key"))
@@ -174,6 +188,39 @@ namespace AnodyneArchipelago
             else if (itemName == "Progressive Red Grotto")
             {
                 GlobalState.events.IncEvent("ProgressiveRedGrotto");
+            }
+
+            string message;
+            if (item.Player == _session.ConnectionInfo.Slot)
+            {
+                message = $"Found {itemName}!";
+            }
+            else
+            {
+                string otherPlayer = _session.Players.GetPlayerAlias(item.Player);
+                message = $"Received {itemName} from {otherPlayer}.";
+            }
+
+            GlobalState.Dialogue = message;
+        }
+
+        private static void OnMessageReceived(LogMessage message)
+        {
+            switch (message)
+            {
+                case ItemSendLogMessage itemSendLogMessage:
+                    if (itemSendLogMessage.IsSenderTheActivePlayer && !itemSendLogMessage.IsReceiverTheActivePlayer)
+                    {
+                        string itemName = _session.Items.GetItemName(itemSendLogMessage.Item.Item);
+
+                        string messageText;
+                        string otherPlayer = _session.Players.GetPlayerAlias(itemSendLogMessage.Receiver.Slot);
+                        messageText = $"Sent {itemName} to {otherPlayer}.";
+
+                        SoundManager.PlaySoundEffect("gettreasure");
+                        GlobalState.Dialogue = messageText;
+                    }
+                    break;
             }
         }
     }
