@@ -1,6 +1,7 @@
 ﻿using AnodyneSharp.Input;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
+using AnodyneSharp.States;
 using AnodyneSharp.UI;
 using AnodyneSharp.UI.PauseMenu;
 using AnodyneSharp.UI.PauseMenu.Config;
@@ -23,6 +24,8 @@ namespace AnodyneArchipelago.Menu
         private UILabel _connectLabel;
         private UILabel _settingsLabel;
         private UILabel _quitLabel;
+
+        private State _substate = null;
 
         private string _apServer = "";
         private string _apSlot = "";
@@ -62,6 +65,18 @@ namespace AnodyneArchipelago.Menu
 
         public override void Update()
         {
+            if (_substate != null)
+            {
+                _substate.Update();
+
+                if (_substate.Exit)
+                {
+                    _substate = null;
+                }
+
+                return;
+            }
+
             _selector.Update();
             _selector.PostUpdate();
 
@@ -92,6 +107,11 @@ namespace AnodyneArchipelago.Menu
             _connectLabel.Draw();
             _settingsLabel.Draw();
             _quitLabel.Draw();
+
+            if (_substate != null)
+            {
+                _substate.DrawUI();
+            }
         }
 
         private void SetCursorPosition(int i)
@@ -159,7 +179,7 @@ namespace AnodyneArchipelago.Menu
                 {
                     label.SetText(text);
                 }
-                
+
                 label.Color = new Color(184, 32, 0);
             }
         }
@@ -184,8 +204,19 @@ namespace AnodyneArchipelago.Menu
             }
             else if (KeyInput.JustPressedRebindableKey(KeyFunctions.Accept))
             {
+                SoundManager.PlaySoundEffect("menu_select");
+
                 switch (_selectorIndex)
                 {
+                    case 0:
+                        _substate = new TextEntry("Server:", _apServer, (string value) => { _apServer = value; UpdateLabels(); });
+                        break;
+                    case 1:
+                        _substate = new TextEntry("Slot:", _apSlot, (string value) => { _apSlot = value; UpdateLabels(); });
+                        break;
+                    case 2:
+                        _substate = new TextEntry("Password:", _apPassword, (string value) => { _apPassword = value; UpdateLabels(); });
+                        break;
                     case 6:
                         GlobalState.ClosingGame = true;
                         break;
