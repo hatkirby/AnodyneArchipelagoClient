@@ -33,7 +33,7 @@ namespace AnodyneArchipelago
                 base.GetTreasure();
             }
             
-            ArchipelagoManager.SendLocation(_location);
+            Plugin.ArchipelagoManager.SendLocation(_location);
         }
     }
 }

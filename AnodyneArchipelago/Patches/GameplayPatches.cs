@@ -69,15 +69,15 @@ namespace AnodyneArchipelago.Patches
 
             if (preset.Frame == 0)
             {
-                ArchipelagoManager.SendLocation("Temple of the Seeing One - Green Key");
+                Plugin.ArchipelagoManager.SendLocation("Temple of the Seeing One - Green Key");
             }
             else if (preset.Frame == 1)
             {
-                ArchipelagoManager.SendLocation("Red Grotto - Red Key");
+                Plugin.ArchipelagoManager.SendLocation("Red Grotto - Red Key");
             }
             else if (preset.Frame == 2)
             {
-                ArchipelagoManager.SendLocation("Mountain Cavern - Blue Key");
+                Plugin.ArchipelagoManager.SendLocation("Mountain Cavern - Blue Key");
             }
         }
     }
@@ -134,7 +134,7 @@ namespace AnodyneArchipelago.Patches
 
             if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
             {
-                ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
+                Plugin.ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
             }
         }
     }
@@ -221,7 +221,7 @@ namespace AnodyneArchipelago.Patches
 
             if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
             {
-                ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
+                Plugin.ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
             }
         }
     }

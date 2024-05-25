@@ -11,53 +11,48 @@ using Archipelago.MultiClient.Net.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnodyneArchipelago
 {
-    internal class ArchipelagoManager
+    public class ArchipelagoManager
     {
-        private static ArchipelagoSession _session;
-        private static int _itemIndex = 0;
+        private ArchipelagoSession _session;
+        private int _itemIndex = 0;
+        private string _seedName;
 
-        private static readonly Queue<NetworkItem> _itemsToCollect = new();
+        private readonly Queue<NetworkItem> _itemsToCollect = new();
 
-        public static void Connect(string url, string slotName, string password)
+        public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
             LoginResult result;
             try
             {
                 _session = ArchipelagoSessionFactory.CreateSession(url);
                 _session.MessageLog.OnMessageReceived += OnMessageReceived;
-                result = _session.TryConnectAndLogin("Anodyne", slotName, ItemsHandlingFlags.AllItems, null, null, null, password == "" ? null : password);
+
+                RoomInfoPacket roomInfoPacket = await _session.ConnectAsync();
+                _seedName = roomInfoPacket.SeedName;
+
+                result = await _session.LoginAsync("Anodyne", slotName, ItemsHandlingFlags.AllItems, null, null, null, password == "" ? null : password);
             }
             catch (Exception e)
             {
                 result = new LoginFailure(e.GetBaseException().Message);
             }
 
-            if (!result.Successful)
-            {
-                LoginFailure failure = result as LoginFailure;
-                string errorMessage = $"Failed to connect to {url} as {slotName}:";
-                foreach (string error in failure.Errors)
-                {
-                    errorMessage += $"\n    {error}";
-                }
-                foreach (ConnectionRefusedError error in failure.ErrorCodes)
-                {
-                    errorMessage += $"\n    {error}";
-                }
-
-                Plugin.Instance.Log.LogError(errorMessage);
-
-                return;
-            }
-
             _itemIndex = 0;
             _itemsToCollect.Clear();
+
+            return result;
         }
 
-        public static void Disconnect()
+        ~ArchipelagoManager()
+        {
+            Disconnect();
+        }
+
+        public void Disconnect()
         {
             if (_session == null)
             {
@@ -68,7 +63,17 @@ namespace AnodyneArchipelago
             _session = null;
         }
 
-        public static void SendLocation(string location)
+        public string GetSeed()
+        {
+            return _seedName;
+        }
+
+        public int GetPlayer()
+        {
+            return _session.ConnectionInfo.Slot;
+        }
+
+        public void SendLocation(string location)
         {
             if (_session == null)
             {
@@ -79,7 +84,7 @@ namespace AnodyneArchipelago
             _session.Locations.CompleteLocationChecks(_session.Locations.GetLocationIdFromName("Anodyne", location));
         }
 
-        public static void Update()
+        public void Update()
         {
             if (_session == null)
             {
@@ -104,7 +109,7 @@ namespace AnodyneArchipelago
                 }
             }
 
-            if (_itemsToCollect.Count > 0 && (GlobalState.Dialogue == null || GlobalState.Dialogue == "") && !GlobalState.ScreenTransition)
+            if (_itemsToCollect.Count > 0 && (GlobalState.Dialogue == null || GlobalState.Dialogue == "") && !GlobalState.ScreenTransition && Plugin.Player != null && GlobalState.black_overlay.alpha == 0f)
             {
                 NetworkItem item = _itemsToCollect.Dequeue();
                 HandleItem(item);
@@ -125,7 +130,7 @@ namespace AnodyneArchipelago
             }
         }
 
-        private static void HandleItem(NetworkItem item)
+        private void HandleItem(NetworkItem item)
         {
             if (item.Player == _session.ConnectionInfo.Slot)
             {
@@ -223,7 +228,7 @@ namespace AnodyneArchipelago
             GlobalState.Dialogue = message;
         }
 
-        private static void OnMessageReceived(LogMessage message)
+        private void OnMessageReceived(LogMessage message)
         {
             switch (message)
             {

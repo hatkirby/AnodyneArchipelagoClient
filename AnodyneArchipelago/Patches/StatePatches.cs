@@ -8,6 +8,7 @@ using AnodyneSharp.Drawing.Effects;
 using AnodyneSharp.States.MainMenu;
 using static AnodyneSharp.AnodyneGame;
 using AnodyneSharp.Drawing;
+using System.IO;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -16,7 +17,10 @@ namespace AnodyneArchipelago.Patches
     {
         static void Postfix()
         {
-            ArchipelagoManager.Update();
+            if (Plugin.ArchipelagoManager != null)
+            {
+                Plugin.ArchipelagoManager.Update();
+            }
         }
     }
 
@@ -63,6 +67,17 @@ namespace AnodyneArchipelago.Patches
         }
     }
 
+    [HarmonyPatch(typeof(GlobalState.Save), nameof(GlobalState.Save.SaveTo))]
+    class SaveToPatch
+    {
+        static bool Prefix(GlobalState.Save __instance)
+        {
+            File.WriteAllText(string.Format("{0}Saves/Save_zzAP{1}_{2}.dat", GameConstants.SavePath, Plugin.ArchipelagoManager.GetSeed(), Plugin.ArchipelagoManager.GetPlayer()), __instance.ToString());
+
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(PlayState), nameof(PlayState.Create))]
     class PlayStateCreatePatch
     {
@@ -76,11 +91,6 @@ namespace AnodyneArchipelago.Patches
             GlobalState.events.SetEvent("red_cave_l_ss", 999);
             GlobalState.events.SetEvent("red_cave_n_ss", 999);
             GlobalState.events.SetEvent("red_cave_r_ss", 999);
-
-            // Connect to archipelago.
-            Plugin.Instance.Log.LogInfo("Connecting to Archipelago!");
-
-            ArchipelagoManager.Connect("localhost:38281", "Anodyne", "");
         }
     }
 }

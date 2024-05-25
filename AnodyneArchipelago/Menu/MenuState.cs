@@ -33,6 +33,9 @@ namespace AnodyneArchipelago.Menu
 
         private int _selectorIndex = 0;
 
+        private bool _fadingOut = false;
+        private bool _isNewGame;
+
         public override void Create()
         {
             _selector = new();
@@ -65,6 +68,18 @@ namespace AnodyneArchipelago.Menu
 
         public override void Update()
         {
+            if (_fadingOut)
+            {
+                GlobalState.black_overlay.ChangeAlpha(0.72f);
+
+                if (GlobalState.black_overlay.alpha == 1.0)
+                {
+                    ChangeStateEvent(_isNewGame ? AnodyneSharp.AnodyneGame.GameState.Intro : AnodyneSharp.AnodyneGame.GameState.Game);
+                }
+
+                return;
+            }
+
             if (_substate != null)
             {
                 _substate.Update();
@@ -217,6 +232,9 @@ namespace AnodyneArchipelago.Menu
                     case 2:
                         _substate = new TextEntry("Password:", _apPassword, (string value) => { _apPassword = value; UpdateLabels(); });
                         break;
+                    case 4:
+                        _substate = new ConnectionState(_apServer, _apSlot, _apPassword, OnConnected);
+                        break;
                     case 6:
                         GlobalState.ClosingGame = true;
                         break;
@@ -230,6 +248,26 @@ namespace AnodyneArchipelago.Menu
         private void PageValueChanged(string value, int index)
         {
 
+        }
+
+        private void OnConnected(ArchipelagoManager archipelagoManager)
+        {
+            Plugin.ArchipelagoManager = archipelagoManager;
+
+            GlobalState.Save saveFile = GlobalState.Save.GetSave(string.Format("{0}Saves/Save_zzAP{1}_{2}.dat", GameConstants.SavePath, Plugin.ArchipelagoManager.GetSeed(), Plugin.ArchipelagoManager.GetPlayer()));
+
+            GlobalState.ResetValues();
+            if (saveFile != null)
+            {
+                GlobalState.LoadSave(saveFile);
+                _isNewGame = false;
+            }
+            else
+            {
+                _isNewGame = true;
+            }
+
+            _fadingOut = true;
         }
     }
 }
