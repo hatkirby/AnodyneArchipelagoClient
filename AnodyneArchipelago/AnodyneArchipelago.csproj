@@ -35,5 +35,8 @@
     <Reference Include="FNA">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Anodyne\Remake\FNA.dll</HintPath>
     </Reference>
+    <Reference Include="SemanticVersioning">
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\SemanticVersioning.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

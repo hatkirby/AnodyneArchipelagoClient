@@ -3,15 +3,21 @@ using BepInEx;
 using BepInEx.NET.Common;
 using HarmonyLib;
 using HarmonyLib.Tools;
+using System;
 using System.Reflection;
 
 namespace AnodyneArchipelago
 {
-    [BepInPlugin("com.fourisland.plugins.anodyne.archipelago", "Anodyne Archipelago", "1.0.0.0")]
+    [BepInPlugin("com.fourisland.plugins.anodyne.archipelago", "Anodyne Archipelago", "0.1.0")]
     public class Plugin : BasePlugin
     {
         public static Plugin Instance = null;
         public static Player Player = null;
+
+        public static string GetVersion()
+        {
+            return ((BepInPlugin)Attribute.GetCustomAttribute(typeof(Plugin), typeof(BepInPlugin))).Version.ToString();
+        }
 
         public override void Load()
         {
