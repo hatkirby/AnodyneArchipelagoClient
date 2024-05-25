@@ -26,6 +26,7 @@ namespace AnodyneArchipelago.Menu
         private UILabel _quitLabel;
 
         private State _substate = null;
+        private bool _hide = false;
 
         private string _apServer = "";
         private string _apSlot = "";
@@ -109,6 +110,7 @@ namespace AnodyneArchipelago.Menu
                 if (_substate.Exit)
                 {
                     _substate = null;
+                    _hide = false;
                 }
 
                 return;
@@ -131,19 +133,22 @@ namespace AnodyneArchipelago.Menu
 
         public override void DrawUI()
         {
-            _selector.Draw();
-            _versionLabel1.Draw();
-            _versionLabel2.Draw();
-            _serverLabel.Draw();
-            _serverValue.Draw();
-            _slotLabel.Draw();
-            _slotValue.Draw();
-            _passwordLabel.Draw();
-            _passwordValue.Draw();
-            _connectionSwitcher.Draw();
-            _connectLabel.Draw();
-            _settingsLabel.Draw();
-            _quitLabel.Draw();
+            if (!_hide)
+            {
+                _selector.Draw();
+                _versionLabel1.Draw();
+                _versionLabel2.Draw();
+                _serverLabel.Draw();
+                _serverValue.Draw();
+                _slotLabel.Draw();
+                _slotValue.Draw();
+                _passwordLabel.Draw();
+                _passwordValue.Draw();
+                _connectionSwitcher.Draw();
+                _connectLabel.Draw();
+                _settingsLabel.Draw();
+                _quitLabel.Draw();
+            }
 
             if (_substate != null)
             {
@@ -256,6 +261,10 @@ namespace AnodyneArchipelago.Menu
                         break;
                     case 4:
                         _substate = new ConnectionState(_apServer, _apSlot, _apPassword, OnConnected);
+                        break;
+                    case 5:
+                        _substate = new BoxedConfigState();
+                        _hide = true;
                         break;
                     case 6:
                         GlobalState.ClosingGame = true;
