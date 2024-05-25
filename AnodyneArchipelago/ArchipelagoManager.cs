@@ -107,6 +107,8 @@ namespace AnodyneArchipelago
                     NetworkItem item = _session.Items.AllItemsReceived[i];
                     _itemsToCollect.Enqueue(item);
                 }
+
+                _itemIndex = _session.Items.AllItemsReceived.Count;
             }
 
             if (_itemsToCollect.Count > 0 && (GlobalState.Dialogue == null || GlobalState.Dialogue == "") && !GlobalState.ScreenTransition && Plugin.Player != null && GlobalState.black_overlay.alpha == 0f)
@@ -132,7 +134,7 @@ namespace AnodyneArchipelago
 
         private void HandleItem(NetworkItem item)
         {
-            if (item.Player == _session.ConnectionInfo.Slot)
+            if (item.Player == _session.ConnectionInfo.Slot && item.Location >= 0)
             {
                 string itemKey = $"ArchipelagoLocation-{item.Location}";
                 if (GlobalState.events.GetEvent(itemKey) > 0)
@@ -212,6 +214,14 @@ namespace AnodyneArchipelago
                 CardTreasure cardTreasure = new(Plugin.Player.Position, GlobalState.inventory.CardCount);
                 cardTreasure.GetTreasure();
                 GlobalState.SpawnEntity(cardTreasure);
+            }
+            else if (itemName == "Cardboard Box")
+            {
+                GlobalState.events.SetEvent("ReceivedCardboardBox", 1);
+            }
+            else if (itemName == "Biking Shoes")
+            {
+                GlobalState.events.SetEvent("ReceivedBikingShoes", 1);
             }
 
             string message;

@@ -10,6 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
+using AnodyneSharp.Entities.Interactive.Npc.RunningTradeNPCs;
+using AnodyneSharp.Dialogue;
+using AnodyneSharp.Sounds;
+using AnodyneSharp.States;
+using AnodyneSharp.Entities.Interactive.Npc;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -222,6 +227,97 @@ namespace AnodyneArchipelago.Patches
             if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
             {
                 Plugin.ArchipelagoManager.SendLocation(Locations.LocationsByGuid[preset.EntityID]);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Box), nameof(Box.PlayerInteraction))]
+    class BoxOpenPatch
+    {
+        static bool Prefix(Box __instance, ref bool __result)
+        {
+            if (!GlobalState.events.SpookedMonster)
+            {
+                __result = false;
+                return false;
+            }
+                
+            __instance.Play("open");
+            SoundManager.PlaySoundEffect("broom_hit");
+            GlobalState.StartCutscene = OnOpened(__instance);
+            __result = true;
+            return false;
+        }
+
+        static IEnumerator<CutsceneState.CutsceneEvent> OnOpened(Box box)
+        {
+            MethodInfo openedMethod = typeof(Box).GetMethod("OnOpened", BindingFlags.NonPublic | BindingFlags.Instance);
+            IEnumerator<CutsceneState.CutsceneEvent> subCutscene = (IEnumerator<CutsceneState.CutsceneEvent>)openedMethod.Invoke(box, new object[] { });
+
+            yield return subCutscene.Current;
+            while (subCutscene.MoveNext())
+            {
+                yield return subCutscene.Current;
+            }
+
+            GlobalState.inventory.tradeState = InventoryManager.TradeState.NONE;
+
+            Plugin.ArchipelagoManager.SendLocation("Fields - Cardboard Box");
+        }
+    }
+
+    [HarmonyPatch(typeof(ShopKeep), nameof(ShopKeep.PlayerInteraction))]
+    class ShopKeepTalkPatch
+    {
+        static bool Prefix(ShopKeep __instance)
+        {
+            if (GlobalState.events.GetEvent("ReceivedCardboardBox") == 1 && GlobalState.events.GetEvent("UsedCardboardBox") == 0)
+            {
+                GlobalState.Dialogue = GetDiag(2) + " " + GetDiag(4);
+                GlobalState.events.SetEvent("UsedCardboardBox", 1);
+
+                EntityPreset preset = PatchHelper.GetEntityPreset(typeof(ShopKeep), __instance);
+                preset.Activated = true;
+
+                Plugin.ArchipelagoManager.SendLocation("Fields - Shopkeeper Trade");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        static string GetDiag(int i) => DialogueManager.GetDialogue("misc", "any", "tradenpc", i);
+    }
+
+    [HarmonyPatch(typeof(MitraFields), "GetInteractionText")]
+    class MitraFieldsTextPatch
+    {
+        static bool Prefix(ref string __result)
+        {
+            if (GlobalState.events.GetEvent("ReceivedBikingShoes") == 1 && GlobalState.events.GetEvent("UsedBikingShoes") == 0)
+            {
+                __result = DialogueManager.GetDialogue("misc", "any", "mitra", 1);
+
+                GlobalState.events.SetEvent("UsedBikingShoes", 1);
+
+                Plugin.ArchipelagoManager.SendLocation("Fields - Mitra Trade");
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    [HarmonyPatch("AnodyneSharp.Entities.Interactive.Npc.Windmill.Console", "PlayerInteraction")]
+    class WindmillInteractPatch
+    {
+        static void Prefix(object __instance)
+        {
+            if ((__instance as Entity).CurAnimName == "active")
+            {
+                Plugin.ArchipelagoManager.SendLocation("Windmill - Activation");
             }
         }
     }
