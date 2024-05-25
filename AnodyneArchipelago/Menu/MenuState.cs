@@ -31,6 +31,9 @@ namespace AnodyneArchipelago.Menu
         private string _apSlot = "";
         private string _apPassword = "";
 
+        private ArchipelagoSettings _archipelagoSettings;
+        private int _curPage;
+
         private int _selectorIndex = 0;
 
         private bool _fadingOut = false;
@@ -42,6 +45,12 @@ namespace AnodyneArchipelago.Menu
             {
                 Plugin.ArchipelagoManager.Disconnect();
                 Plugin.ArchipelagoManager = null;
+            }
+
+            _archipelagoSettings = ArchipelagoSettings.Load();
+            if (_archipelagoSettings == null)
+            {
+                _archipelagoSettings = new();
             }
 
             _selector = new();
@@ -59,12 +68,19 @@ namespace AnodyneArchipelago.Menu
             _settingsLabel = new(new Vector2(60f, 131f), false, $"Config", new Color(116, 140, 144));
             _quitLabel = new(new Vector2(60f, 147f), false, $"Quit", new Color(116, 140, 144));
 
-            _connectionSwitcher = new(new Vector2(60f, 95f), 32f, 0, true, new string[1] { "1/1" });
+            string[] selectorValues = new string[_archipelagoSettings.ConnectionDetails.Count + 1];
+            for (int i= 0; i < selectorValues.Length; i++)
+            {
+                selectorValues[i] = $"{i+1}/{selectorValues.Length}";
+            }
+
+            _connectionSwitcher = new(new Vector2(60f, 95f), 32f, 0, true, selectorValues);
             _connectionSwitcher.noConfirm = true;
             _connectionSwitcher.noLoop = true;
             _connectionSwitcher.ValueChangedEvent = PageValueChanged;
 
             SetCursorPosition(0);
+            SetPage(_archipelagoSettings.ConnectionDetails.Count == 0 ? 0 : 1);
             UpdateLabels();
         }
 
@@ -249,15 +265,63 @@ namespace AnodyneArchipelago.Menu
                         break;
                 }
             }
+            else if (KeyInput.JustPressedRebindableKey(KeyFunctions.Left))
+            {
+                if (_selectorIndex < 3 && _curPage > 0)
+                {
+                    SoundManager.PlaySoundEffect("menu_move");
+
+                    SetPage(_curPage - 1);
+                }
+            }
+            else if (KeyInput.JustPressedRebindableKey(KeyFunctions.Right))
+            {
+                if (_selectorIndex < 3 && _curPage < _archipelagoSettings.ConnectionDetails.Count)
+                {
+                    SoundManager.PlaySoundEffect("menu_move");
+
+                    SetPage(_curPage + 1);
+                }
+            }
+        }
+
+        private void SetPage(int index)
+        {
+            _curPage = index;
+
+            if (index == 0)
+            {
+                _apServer = "";
+                _apSlot = "";
+                _apPassword = "";
+            }
+            else
+            {
+                ConnectionDetails details = _archipelagoSettings.ConnectionDetails[index - 1];
+                _apServer = details.ApServer;
+                _apSlot = details.ApSlot;
+                _apPassword = details.ApPassword;
+            }
+
+            _connectionSwitcher.SetValue(index);
+            UpdateLabels();
         }
 
         private void PageValueChanged(string value, int index)
         {
-
+            SetPage(index);
         }
 
         private void OnConnected(ArchipelagoManager archipelagoManager)
         {
+            _archipelagoSettings.AddConnection(new()
+            {
+                ApServer = _apServer,
+                ApSlot = _apSlot,
+                ApPassword = _apPassword
+            });
+            _archipelagoSettings.Save();
+
             Plugin.ArchipelagoManager = archipelagoManager;
 
             GlobalState.Save saveFile = GlobalState.Save.GetSave(string.Format("{0}Saves/Save_zzAP{1}_{2}.dat", GameConstants.SavePath, Plugin.ArchipelagoManager.GetSeed(), Plugin.ArchipelagoManager.GetPlayer()));

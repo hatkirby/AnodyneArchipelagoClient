@@ -38,5 +38,14 @@
     <Reference Include="SemanticVersioning">
       <HintPath>..\..\BepInEx\bin\NET.Framework\net462\SemanticVersioning.dll</HintPath>
     </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json">
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\BepInEx\bin\NET.Framework\net462\System.ValueTuple.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
