@@ -15,6 +15,7 @@ using AnodyneSharp.Dialogue;
 using AnodyneSharp.Sounds;
 using AnodyneSharp.States;
 using AnodyneSharp.Entities.Interactive.Npc;
+using AnodyneSharp.MapData;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -321,4 +322,26 @@ namespace AnodyneArchipelago.Patches
             }
         }
     }
+    
+    [HarmonyPatch(typeof(PlayState), "Warp")]
+    class PlayWarpPatch
+    {
+        static void Postfix()
+        {
+            if (GlobalState.CURRENT_MAP_NAME == "FIELDS")
+            {
+                // Place a rock blocking access to Terminal without the red key.
+                PatchHelper.SetMapTile(31, 47, 11, Layer.BG);
+            }
+        }
+    }
+
+    /*[HarmonyPatch(typeof(Player), "Movement")]
+    class PlayerMovementPatch
+    {
+        static void Postfix(Player __instance)
+        {
+            Plugin.Instance.Log.LogInfo($"Player pos: {GlobalState.Map.ToMapLoc(__instance.Position)}");
+        }
+    }*/
 }
