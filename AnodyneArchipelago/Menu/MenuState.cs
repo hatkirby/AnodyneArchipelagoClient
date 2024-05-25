@@ -38,6 +38,12 @@ namespace AnodyneArchipelago.Menu
 
         public override void Create()
         {
+            if (Plugin.ArchipelagoManager != null)
+            {
+                Plugin.ArchipelagoManager.Disconnect();
+                Plugin.ArchipelagoManager = null;
+            }
+
             _selector = new();
             _selector.Play("enabledRight");
 
