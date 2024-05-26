@@ -25,6 +25,8 @@ namespace AnodyneArchipelago
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
 
+        private Task<Dictionary<string, NetworkItem>> _scoutTask;
+
         public long EndgameCardRequirement => _endgameCardRequirement;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
@@ -54,6 +56,8 @@ namespace AnodyneArchipelago
                 _endgameCardRequirement = (long)login.SlotData["endgame_card_requirement"];
             }
 
+            _scoutTask = Task.Run(() => ScoutAllLocations());
+
             return result;
         }
 
@@ -71,6 +75,34 @@ namespace AnodyneArchipelago
 
             _session.Socket.DisconnectAsync();
             _session = null;
+        }
+
+        private async Task<Dictionary<string, NetworkItem>> ScoutAllLocations()
+        {
+            LocationInfoPacket locationInfo = await _session.Locations.ScoutLocationsAsync(_session.Locations.AllLocations.ToArray());
+
+            Dictionary<string, NetworkItem> result = new();
+            foreach (NetworkItem networkItem in locationInfo.Locations)
+            {
+                result[_session.Locations.GetLocationNameFromId(networkItem.Location)] = networkItem;
+            }
+
+            return result;
+        }
+
+        public NetworkItem? GetScoutedLocation(string locationName)
+        {
+            if (_scoutTask == null || !_scoutTask.IsCompleted || !_scoutTask.Result.ContainsKey(locationName))
+            {
+                return null;
+            }
+
+            return _scoutTask.Result[locationName];
+        }
+
+        public string GetItemName(long id)
+        {
+            return _session.Items.GetItemName(id);
         }
 
         public string GetSeed()

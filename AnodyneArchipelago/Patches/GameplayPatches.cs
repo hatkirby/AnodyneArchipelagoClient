@@ -37,7 +37,7 @@ namespace AnodyneArchipelago.Patches
             Guid entityId = PatchHelper.GetEntityPreset(typeof(TreasureChest), __instance).EntityID;
             if (Locations.LocationsByGuid.ContainsKey(entityId))
             {
-                BaseTreasure treasure = new ArchipelagoTreasure(Locations.LocationsByGuid[entityId], __instance.Position);
+                BaseTreasure treasure = ArchipelagoTreasure.Create(Locations.LocationsByGuid[entityId], __instance.Position);
 
                 FieldInfo treasureField = typeof(TreasureChest).GetField("_treasure", BindingFlags.NonPublic | BindingFlags.Instance);
                 treasureField.SetValue(__instance, treasure);
