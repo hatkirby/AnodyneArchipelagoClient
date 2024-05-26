@@ -216,7 +216,13 @@ namespace AnodyneArchipelago
             }
             else if (itemName == "Card")
             {
-                CardTreasure cardTreasure = new(Plugin.Player.Position, GlobalState.inventory.CardCount);
+                int cardIndex = GlobalState.inventory.CardCount;
+                if (cardIndex >= 19)
+                {
+                    cardIndex += 1;
+                }
+
+                CardTreasure cardTreasure = new(Plugin.Player.Position, cardIndex);
                 cardTreasure.GetTreasure();
                 GlobalState.SpawnEntity(cardTreasure);
             }
