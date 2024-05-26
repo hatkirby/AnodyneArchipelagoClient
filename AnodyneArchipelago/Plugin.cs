@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace AnodyneArchipelago
 {
-    [BepInPlugin("com.fourisland.plugins.anodyne.archipelago", "Anodyne Archipelago", "0.1.0")]
+    [BepInPlugin("com.fourisland.plugins.anodyne.archipelago", "Anodyne Archipelago", "0.2.0")]
     public class Plugin : BasePlugin
     {
         public static Plugin Instance = null;
