@@ -1,6 +1,7 @@
 ﻿using AnodyneSharp.Input;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace AnodyneArchipelago.Menu
 {
@@ -86,6 +87,17 @@ namespace AnodyneArchipelago.Menu
 
         public static string ReturnCharacter()
         {
+            if (KeyInput.JustPressedKey(Keys.V) && (KeyInput.IsKeyPressed(Keys.LeftControl) || KeyInput.IsKeyPressed(Keys.RightControl)))
+            {
+                string result = "";
+                Thread clipboardThread = new(() => result = System.Windows.Forms.Clipboard.GetText());
+                clipboardThread.SetApartmentState(ApartmentState.STA);
+                clipboardThread.Start();
+                clipboardThread.Join();
+
+                return result;
+            }
+
             foreach (InputCharacter inputCharacter in _characters)
             {
                 if (KeyInput.JustPressedKey(inputCharacter.ReturnKey()))
