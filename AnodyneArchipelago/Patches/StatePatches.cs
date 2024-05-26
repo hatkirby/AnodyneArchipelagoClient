@@ -117,4 +117,14 @@ namespace AnodyneArchipelago.Patches
             }
         }
     }
+
+    [HarmonyPatch(typeof(CreditsState), MethodType.Constructor, new Type[] {})]
+    static class CreateCreditsPatch
+    {
+        static void Postfix()
+        {
+            Plugin.IsGamePaused = true;
+            Plugin.ArchipelagoManager.ActivateGoal();
+        }
+    }
 }

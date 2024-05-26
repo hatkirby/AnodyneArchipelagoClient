@@ -249,6 +249,15 @@ namespace AnodyneArchipelago
             GlobalState.Dialogue = message;
         }
 
+        public void ActivateGoal()
+        {
+            var statusUpdatePacket = new StatusUpdatePacket
+            {
+                Status = ArchipelagoClientState.ClientGoal
+            };
+            _session.Socket.SendPacket(statusUpdatePacket);
+        }
+
         private void OnMessageReceived(LogMessage message)
         {
             switch (message)
