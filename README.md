@@ -17,7 +17,7 @@ so that it can be played as part of an Archipelago multiworld game.
    folder that opens, you should see another folder called "Remake".
    `AnodyneSharp.exe` should be in there.
 3. Unzip the randomizer into the same folder as `AnodyneSharp.exe`. This should
-   add one folder, one exe, and several dll files to this folder.
+   add two folders, one exe, and several dll files to this folder.
 
 ## Joining a Multiworld game
 
