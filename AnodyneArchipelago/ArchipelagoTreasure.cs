@@ -9,7 +9,7 @@ namespace AnodyneArchipelago
     {
         private string _location;
 
-        public ArchipelagoTreasure(string location, Vector2 pos) : base("item_jump_shoes", pos, 0, -1)
+        public ArchipelagoTreasure(string location, Vector2 pos) : base("archipelago", pos, 0, -1)
         {
             _location = location;
         }

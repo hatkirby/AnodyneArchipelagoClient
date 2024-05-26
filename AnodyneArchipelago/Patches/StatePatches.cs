@@ -10,9 +10,24 @@ using static AnodyneSharp.AnodyneGame;
 using AnodyneSharp.Drawing;
 using System.IO;
 using System;
+using AnodyneSharp.Resources;
+using BepInEx;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace AnodyneArchipelago.Patches
 {
+    [HarmonyPatch(typeof(AnodyneGame), "LoadContent")]
+    class AnodyneLoadContentPatch
+    {
+        static void Prefix(AnodyneGame __instance)
+        {
+            FieldInfo gdmField = typeof(AnodyneGame).GetField("graphics", BindingFlags.NonPublic | BindingFlags.Instance);
+            Plugin.GraphicsDevice = ((GraphicsDeviceManager)gdmField.GetValue(__instance)).GraphicsDevice;
+        }
+    }
+
     [HarmonyPatch(typeof(AnodyneGame), "Update")]
     class GameUpdatePatch
     {
@@ -125,6 +140,20 @@ namespace AnodyneArchipelago.Patches
         {
             Plugin.IsGamePaused = true;
             Plugin.ArchipelagoManager.ActivateGoal();
+        }
+    }
+
+    [HarmonyPatch(typeof(ResourceManager), nameof(ResourceManager.LoadResources))]
+    static class LoadResourcesPatch
+    {
+        static void Postfix()
+        {
+            FileStream filestream = File.OpenRead($"{Paths.GameRootPath}\\Resources\\archipelago.png");
+            Texture2D apSprite = Texture2D.FromStream(Plugin.GraphicsDevice, filestream);
+
+            FieldInfo texturesField = typeof(ResourceManager).GetField("_textures", BindingFlags.NonPublic | BindingFlags.Static);
+            Dictionary<string, Texture2D> textures = (Dictionary<string, Texture2D>)texturesField.GetValue(null);
+            textures["archipelago"] = apSprite;
         }
     }
 }

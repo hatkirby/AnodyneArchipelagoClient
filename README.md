@@ -51,6 +51,7 @@ The layout of the `AnodyneArchipelago` release is as follows:
   `MonoMod.RuntimeDetour.dll`, `MonoMod.Utils.dll`, `SemanticVersioning.dll`.
 - The `AnodyneArchipelago` dependencies: `Archipelago.MultiClient.Net.dll`,
   `Newtonsoft.Json.dll`.
+- The `Resources` folder from the repository root.
 - A folder called `BepInEx`, containing two subfolders: `config`, which contains
   `BepInEx.cfg` from the repository root, and `plugins`, which contains
   `AnodyneArchipelago.dll` itself.

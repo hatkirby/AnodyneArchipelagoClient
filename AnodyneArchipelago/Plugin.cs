@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.NET.Common;
 using HarmonyLib;
 using HarmonyLib.Tools;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
 
@@ -13,6 +14,7 @@ namespace AnodyneArchipelago
     {
         public static Plugin Instance = null;
 
+        public static GraphicsDevice GraphicsDevice = null;
         public static Player Player = null;
         public static ArchipelagoManager ArchipelagoManager = null;
         public static bool IsGamePaused = false;
