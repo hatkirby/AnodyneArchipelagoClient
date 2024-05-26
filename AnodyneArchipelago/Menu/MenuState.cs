@@ -135,7 +135,11 @@ namespace AnodyneArchipelago.Menu
         {
             if (!_hide)
             {
-                _selector.Draw();
+                if (_substate == null)
+                {
+                    _selector.Draw();
+                }
+                
                 _versionLabel1.Draw();
                 _versionLabel2.Draw();
                 _serverLabel.Draw();

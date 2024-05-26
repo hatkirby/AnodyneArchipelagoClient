@@ -148,6 +148,15 @@ namespace AnodyneArchipelago.Patches
     [HarmonyPatch(typeof(EntityPreset), nameof(EntityPreset.Create))]
     class EntityPresetCreatePatch
     {
+        static void Prefix(EntityPreset __instance)
+        {
+            if (__instance.EntityID == new Guid("C8CE6E18-CF07-180B-A550-9DC808A2F7E3"))
+            {
+                PropertyInfo frameProperty = typeof(EntityPreset).GetProperty("Frame");
+                frameProperty.SetValue(__instance, (int)Plugin.ArchipelagoManager.EndgameCardRequirement);
+            }
+        }
+
         static void Postfix(EntityPreset __instance, Entity __result)
         {
             if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.DungeonStatue")

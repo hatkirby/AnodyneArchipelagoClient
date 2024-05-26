@@ -20,9 +20,12 @@ namespace AnodyneArchipelago
         private ArchipelagoSession _session;
         private int _itemIndex = 0;
         private string _seedName;
+        private long _endgameCardRequirement = 36;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
+
+        public long EndgameCardRequirement => _endgameCardRequirement;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -44,6 +47,12 @@ namespace AnodyneArchipelago
 
             _itemIndex = 0;
             _itemsToCollect.Clear();
+
+            LoginSuccessful login = result as LoginSuccessful;
+            if (login.SlotData.ContainsKey("endgame_card_requirement"))
+            {
+                _endgameCardRequirement = (long)login.SlotData["endgame_card_requirement"];
+            }
 
             return result;
         }

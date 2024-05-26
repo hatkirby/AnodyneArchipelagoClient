@@ -50,6 +50,16 @@ namespace AnodyneArchipelago.Menu
         {
             if (_connectionTask != null && _connectionTask.IsCompleted)
             {
+                if (_connectionTask.IsFaulted)
+                {
+                    _text = _connectionTask.Exception.ToString();
+                    _connectionTask = null;
+
+                    UpdateDisplay();
+
+                    return;
+                }
+
                 LoginResult result = _connectionTask.Result;
 
                 if (result.Successful)
