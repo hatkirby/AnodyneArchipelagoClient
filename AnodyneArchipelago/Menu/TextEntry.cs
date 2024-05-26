@@ -3,6 +3,8 @@ using AnodyneSharp.Sounds;
 using AnodyneSharp.States;
 using AnodyneSharp.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace AnodyneArchipelago.Menu
 {
@@ -29,18 +31,15 @@ namespace AnodyneArchipelago.Menu
             _valueLabel = new(new Vector2(20f, 52f), false, "", new Color(), AnodyneSharp.Drawing.DrawOrder.TEXT);
             _bgBox = new UIEntity(new Vector2(16f, 40f), "pop_menu", 16, 16, AnodyneSharp.Drawing.DrawOrder.TEXTBOX);
 
+            TextInputEXT.TextInput += OnTextInput;
+            TextInputEXT.StartTextInput();
+
             UpdateDisplay();
         }
 
-        public override void Update()
+        private void OnTextInput(char ch)
         {
-            string inputtedCharacter = InputHandler.ReturnCharacter();
-            if (inputtedCharacter.Length > 0)
-            {
-                _value += inputtedCharacter;
-                UpdateDisplay();
-            }
-            else if (KeyInput.JustPressedKey(Microsoft.Xna.Framework.Input.Keys.Back))
+            if (ch == '\b')
             {
                 if (_value.Length > 0)
                 {
@@ -48,16 +47,42 @@ namespace AnodyneArchipelago.Menu
                     UpdateDisplay();
                 }
             }
-            else if (KeyInput.JustPressedKey(Microsoft.Xna.Framework.Input.Keys.Escape) || (KeyInput.ControllerMode && KeyInput.JustPressedRebindableKey(KeyFunctions.Cancel)))
+            else if (ch == 22)
+            {
+                string result = "";
+                Thread clipboardThread = new(() => result = System.Windows.Forms.Clipboard.GetText());
+                clipboardThread.SetApartmentState(ApartmentState.STA);
+                clipboardThread.Start();
+                clipboardThread.Join();
+
+                _value += result;
+                UpdateDisplay();
+            }
+            else if (!char.IsControl(ch))
+            {
+                _value += ch;
+                UpdateDisplay();
+            }
+        }
+
+        public override void Update()
+        {
+            if (KeyInput.JustPressedKey(Keys.Escape) || (KeyInput.ControllerMode && KeyInput.JustPressedRebindableKey(KeyFunctions.Cancel)))
             {
                 SoundManager.PlaySoundEffect("menu_select");
                 this.Exit = true;
             }
-            else if (KeyInput.JustPressedKey(Microsoft.Xna.Framework.Input.Keys.Enter) || (KeyInput.ControllerMode && KeyInput.JustPressedRebindableKey(KeyFunctions.Accept)))
+            else if (KeyInput.JustPressedKey(Keys.Enter) || (KeyInput.ControllerMode && KeyInput.JustPressedRebindableKey(KeyFunctions.Accept)))
             {
                 SoundManager.PlaySoundEffect("menu_select");
                 _commitFunc(_value);
                 this.Exit = true;
+            }
+
+            if (this.Exit)
+            {
+                TextInputEXT.StopTextInput();
+                TextInputEXT.TextInput -= OnTextInput;
             }
         }
 
