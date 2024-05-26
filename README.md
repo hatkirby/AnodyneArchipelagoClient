@@ -57,6 +57,14 @@ The layout of the `AnodyneArchipelago` release is as follows:
 
 ## Frequently Asked Questions
 
+### Will this impact the base game?
+
+The base game can still be played normally using `AnodyneSharp.exe` (i.e. by
+launching the game through Steam). The randomizer will only be invoked when
+running the game using `AnodyneArchipelagoLauncher.exe`. The randomizer also
+uses separate save files from the main game, so your vanilla saves will not be
+affected either.
+
 ### Is my progress saved locally?
 
 The randomizer generates a savefile name based on your Multiworld seed and slot
