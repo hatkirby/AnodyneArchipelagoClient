@@ -77,11 +77,11 @@ namespace AnodyneArchipelago.Patches
             {
                 Plugin.ArchipelagoManager.SendLocation("Temple of the Seeing One - Green Key");
             }
-            else if (preset.Frame == 1)
+            else if (preset.Frame == 2)
             {
                 Plugin.ArchipelagoManager.SendLocation("Red Grotto - Red Key");
             }
-            else if (preset.Frame == 2)
+            else if (preset.Frame == 4)
             {
                 Plugin.ArchipelagoManager.SendLocation("Mountain Cavern - Blue Key");
             }
