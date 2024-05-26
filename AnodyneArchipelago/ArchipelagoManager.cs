@@ -22,6 +22,7 @@ namespace AnodyneArchipelago
         private string _seedName;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
+        private readonly Queue<string> _messages = new();
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -111,15 +112,21 @@ namespace AnodyneArchipelago
                 _itemIndex = _session.Items.AllItemsReceived.Count;
             }
 
-            if (_itemsToCollect.Count > 0 &&
-                (GlobalState.Dialogue == null || GlobalState.Dialogue == "") &&
+            if ((GlobalState.Dialogue == null || GlobalState.Dialogue == "") &&
                 !GlobalState.ScreenTransition &&
                 Plugin.Player != null &&
                 GlobalState.black_overlay.alpha == 0f &&
                 !Plugin.IsGamePaused)
             {
-                NetworkItem item = _itemsToCollect.Dequeue();
-                HandleItem(item);
+                if (_itemsToCollect.Count > 0)
+                {
+                    NetworkItem item = _itemsToCollect.Dequeue();
+                    HandleItem(item);
+                }
+                else if (_messages.Count > 0)
+                {
+                    GlobalState.Dialogue = _messages.Dequeue();
+                }
             }
         }
 
@@ -272,7 +279,7 @@ namespace AnodyneArchipelago
                         messageText = $"Sent {itemName} to {otherPlayer}.";
 
                         SoundManager.PlaySoundEffect("gettreasure");
-                        GlobalState.Dialogue = messageText;
+                        _messages.Enqueue(messageText);
                     }
                     break;
             }
