@@ -9,6 +9,7 @@ using AnodyneSharp.States.MainMenu;
 using static AnodyneSharp.AnodyneGame;
 using AnodyneSharp.Drawing;
 using System.IO;
+using System;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -83,6 +84,8 @@ namespace AnodyneArchipelago.Patches
     {
         static void Prefix(PlayState __instance)
         {
+            Plugin.IsGamePaused = false;
+
             // Get player for later access.
             FieldInfo playerField = typeof(PlayState).GetField("_player", BindingFlags.NonPublic | BindingFlags.Instance);
             Plugin.Player = (Player)playerField.GetValue(__instance);
@@ -91,6 +94,27 @@ namespace AnodyneArchipelago.Patches
             GlobalState.events.SetEvent("red_cave_l_ss", 999);
             GlobalState.events.SetEvent("red_cave_n_ss", 999);
             GlobalState.events.SetEvent("red_cave_r_ss", 999);
+        }
+    }
+
+    [HarmonyPatch(typeof(PauseState), MethodType.Constructor, new Type[] { })]
+    class CreatePausePatch
+    {
+        static void Postfix()
+        {
+            Plugin.IsGamePaused = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PauseState), nameof(PauseState.Update))]
+    class UpdatePausePatch
+    {
+        static void Postfix(PauseState __instance)
+        {
+            if (__instance.Exit)
+            {
+                Plugin.IsGamePaused = false;
+            }
         }
     }
 }

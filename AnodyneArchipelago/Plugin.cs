@@ -12,8 +12,10 @@ namespace AnodyneArchipelago
     public class Plugin : BasePlugin
     {
         public static Plugin Instance = null;
+
         public static Player Player = null;
         public static ArchipelagoManager ArchipelagoManager = null;
+        public static bool IsGamePaused = false;
 
         public static string GetVersion()
         {

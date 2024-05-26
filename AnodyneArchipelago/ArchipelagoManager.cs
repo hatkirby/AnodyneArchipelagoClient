@@ -111,7 +111,12 @@ namespace AnodyneArchipelago
                 _itemIndex = _session.Items.AllItemsReceived.Count;
             }
 
-            if (_itemsToCollect.Count > 0 && (GlobalState.Dialogue == null || GlobalState.Dialogue == "") && !GlobalState.ScreenTransition && Plugin.Player != null && GlobalState.black_overlay.alpha == 0f)
+            if (_itemsToCollect.Count > 0 &&
+                (GlobalState.Dialogue == null || GlobalState.Dialogue == "") &&
+                !GlobalState.ScreenTransition &&
+                Plugin.Player != null &&
+                GlobalState.black_overlay.alpha == 0f &&
+                !Plugin.IsGamePaused)
             {
                 NetworkItem item = _itemsToCollect.Dequeue();
                 HandleItem(item);
