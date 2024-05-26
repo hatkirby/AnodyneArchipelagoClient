@@ -79,6 +79,7 @@ namespace AnodyneArchipelago.Menu
             _characters.Add(new InputCharacter(">", ".", Keys.OemPeriod));
             _characters.Add(new InputCharacter("_", "-", Keys.OemMinus));
             _characters.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
+            _characters.Add(new InputCharacter("}", "]", Keys.OemCloseBrackets));
             _characters.Add(new InputCharacter("|", "\"", Keys.OemBackslash));
             _characters.Add(new InputCharacter(":", ";", Keys.OemSemicolon));
         }
