@@ -4,7 +4,6 @@ using AnodyneSharp.States;
 using AnodyneSharp.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System.Threading;
 
 namespace AnodyneArchipelago.Menu
 {
@@ -49,13 +48,7 @@ namespace AnodyneArchipelago.Menu
             }
             else if (ch == 22)
             {
-                string result = "";
-                Thread clipboardThread = new(() => result = System.Windows.Forms.Clipboard.GetText());
-                clipboardThread.SetApartmentState(ApartmentState.STA);
-                clipboardThread.Start();
-                clipboardThread.Join();
-
-                _value += result;
+                _value += SDL2.SDL.SDL_GetClipboardText();
                 UpdateDisplay();
             }
             else if (!char.IsControl(ch))
