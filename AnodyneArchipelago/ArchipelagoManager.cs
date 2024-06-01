@@ -466,7 +466,14 @@ namespace AnodyneArchipelago
         {
             if (_deathLinkService != null)
             {
-                _deathLinkService.SendDeathLink(new DeathLink(_session.Players.GetPlayerName(_session.ConnectionInfo.Slot), _deathLinkReason));
+                string player = _session.Players.GetPlayerName(_session.ConnectionInfo.Slot);
+                string reason = null;
+                if (_deathLinkReason != null)
+                {
+                    reason = $"{player} {_deathLinkReason}";
+                }
+
+                _deathLinkService.SendDeathLink(new DeathLink(player, reason));
             }
 
             _deathLinkReason = null;
