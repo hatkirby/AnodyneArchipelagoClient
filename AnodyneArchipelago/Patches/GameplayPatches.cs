@@ -45,6 +45,12 @@ namespace AnodyneArchipelago.Patches
         // We basically just rewrite this method, because we need to get rid of the part that adds the key to the inventory.
         static bool Prefix(Big_Key __instance, ref bool __result)
         {
+            if (Plugin.ArchipelagoManager.BigKeyShuffle == BigKeyShuffle.Vanilla)
+            {
+                // Vanilla big keys should just use the default implementation.
+                return true;
+            }
+
             MethodInfo statesMethod = typeof(Big_Key).GetMethod("States", BindingFlags.NonPublic | BindingFlags.Instance);
 
             EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Big_Key), __instance);
@@ -61,6 +67,12 @@ namespace AnodyneArchipelago.Patches
     {
         static void Postfix(Big_Key __instance)
         {
+            if (Plugin.ArchipelagoManager.BigKeyShuffle == BigKeyShuffle.Vanilla)
+            {
+                // Vanilla big keys should just use the default implementation.
+                return;
+            }
+
             EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Big_Key), __instance);
 
             if (preset.Frame == 0)
@@ -145,6 +157,22 @@ namespace AnodyneArchipelago.Patches
             else if (__instance.Type.FullName == "AnodyneSharp.Entities.Gadget.SmallKeyGate")
             {
                 if (Plugin.ArchipelagoManager.UnlockSmallKeyGates)
+                {
+                    __result = new Entity(new Vector2(0, 0));
+                    return false;
+                }
+            }
+            else if (__instance.Type.FullName == "AnodyneSharp.Entities.Gadget.BigKeyGate")
+            {
+                if (Plugin.ArchipelagoManager.BigKeyShuffle == BigKeyShuffle.Unlocked)
+                {
+                    __result = new Entity(new Vector2(0, 0));
+                    return false;
+                }
+            }
+            else if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.Big_Key")
+            {
+                if (Plugin.ArchipelagoManager.BigKeyShuffle == BigKeyShuffle.Unlocked)
                 {
                     __result = new Entity(new Vector2(0, 0));
                     return false;

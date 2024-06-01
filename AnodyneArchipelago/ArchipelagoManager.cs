@@ -15,6 +15,15 @@ using System.Threading.Tasks;
 
 namespace AnodyneArchipelago
 {
+    public enum BigKeyShuffle
+    {
+        Vanilla = 0,
+        Unlocked = 1,
+        OwnWorld = 3,
+        AnyWorld = 4,
+        DifferentWorld = 5,
+    }
+
     public class ArchipelagoManager
     {
         private ArchipelagoSession _session;
@@ -23,6 +32,7 @@ namespace AnodyneArchipelago
         private long _endgameCardRequirement = 36;
         private ColorPuzzle _colorPuzzle = new();
         private bool _unlockSmallKeyGates = false;
+        private BigKeyShuffle _bigKeyShuffle;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -32,6 +42,7 @@ namespace AnodyneArchipelago
         public long EndgameCardRequirement => _endgameCardRequirement;
         public ColorPuzzle ColorPuzzle => _colorPuzzle;
         public bool UnlockSmallKeyGates => _unlockSmallKeyGates;
+        public BigKeyShuffle BigKeyShuffle => _bigKeyShuffle;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -73,6 +84,15 @@ namespace AnodyneArchipelago
             else
             {
                 _unlockSmallKeyGates = false;
+            }
+
+            if (login.SlotData.ContainsKey("shuffle_big_gates"))
+            {
+                _bigKeyShuffle = (BigKeyShuffle)(long)login.SlotData["shuffle_big_gates"];
+            }
+            else
+            {
+                _bigKeyShuffle = BigKeyShuffle.AnyWorld;
             }
 
             _scoutTask = Task.Run(() => ScoutAllLocations());
