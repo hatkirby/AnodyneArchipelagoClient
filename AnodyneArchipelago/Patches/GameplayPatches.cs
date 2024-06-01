@@ -25,6 +25,13 @@ namespace AnodyneArchipelago.Patches
         static bool Prefix(TreasureChest __instance)
         {
             Guid entityId = PatchHelper.GetEntityPreset(typeof(TreasureChest), __instance).EntityID;
+
+            if (!Plugin.ArchipelagoManager.ForestBunnyChest && entityId == new Guid("737247bf-3343-677c-0a6d-0b8c4af030d9"))
+            {
+                // Forest bunny check is completely vanilla when the option is off.
+                return true;
+            }
+
             if (Locations.LocationsByGuid.ContainsKey(entityId))
             {
                 BaseTreasure treasure = ArchipelagoTreasure.Create(Locations.LocationsByGuid[entityId], __instance.Position);

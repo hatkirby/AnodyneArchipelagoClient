@@ -38,6 +38,7 @@ namespace AnodyneArchipelago
         private bool _vanillaHealthCicadas = false;
         private bool _vanillaRedCave = false;
         private bool _splitWindmill = false;
+        private bool _forestBunnyChest = false;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -54,6 +55,7 @@ namespace AnodyneArchipelago
         public bool VanillaHealthCicadas => _vanillaHealthCicadas;
         public bool VanillaRedCave => _vanillaRedCave;
         public bool SplitWindmill => _splitWindmill;
+        public bool ForestBunnyChest => _forestBunnyChest;
 
         public bool DeathLinkEnabled => _deathLinkService != null;
 
@@ -145,6 +147,15 @@ namespace AnodyneArchipelago
             else
             {
                 _splitWindmill = false;
+            }
+
+            if (login.SlotData.ContainsKey("forest_bunny_chest"))
+            {
+                _forestBunnyChest = (bool)login.SlotData["forest_bunny_chest"];
+            }
+            else
+            {
+                _forestBunnyChest = false;
             }
 
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])
