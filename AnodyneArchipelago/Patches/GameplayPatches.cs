@@ -19,16 +19,6 @@ using AnodyneSharp.MapData;
 
 namespace AnodyneArchipelago.Patches
 {
-    [HarmonyPatch(typeof(TreasureChest), nameof(TreasureChest.PlayerInteraction))]
-    class ChestInteractPatch
-    {
-        static void Prefix(TreasureChest __instance)
-        {
-            string entityId = PatchHelper.GetEntityPreset(typeof(TreasureChest), __instance).EntityID.ToString();
-            Plugin.Instance.Log.LogInfo($"Touched chest: {entityId}");
-        }
-    }
-
     [HarmonyPatch(typeof(TreasureChest), "SetTreasure")]
     class ChestSetTreasurePatch
     {
@@ -88,20 +78,6 @@ namespace AnodyneArchipelago.Patches
         }
     }
 
-    [HarmonyPatch(typeof(HealthCicadaSentinel), nameof(HealthCicadaSentinel.Collided))]
-    class HealthCicadaInteractPatch
-    {
-        static void Prefix(TreasureChest __instance)
-        {
-            Type hcsType = typeof(HealthCicadaSentinel);
-            FieldInfo childField = hcsType.GetField("_child", BindingFlags.NonPublic | BindingFlags.Instance);
-            HealthCicada healthCicada = (HealthCicada)childField.GetValue(__instance);
-
-            EntityPreset preset = PatchHelper.GetEntityPreset(typeof(HealthCicada), healthCicada);
-            Plugin.Instance.Log.LogInfo($"Touched cicada: {preset.EntityID.ToString()}");
-        }
-    }
-
     [HarmonyPatch(typeof(HealthCicada), nameof(HealthCicada.Update))]
     class HealthCicadaUpdatePatch
     {
@@ -152,8 +128,19 @@ namespace AnodyneArchipelago.Patches
         {
             if (__instance.EntityID == new Guid("C8CE6E18-CF07-180B-A550-9DC808A2F7E3"))
             {
+                // 36 card gate
                 PropertyInfo frameProperty = typeof(EntityPreset).GetProperty("Frame");
                 frameProperty.SetValue(__instance, (int)Plugin.ArchipelagoManager.EndgameCardRequirement);
+            }
+            else if (__instance.EntityID == new Guid("ED2195E9-9798-B9B3-3C15-105C40F7C501"))
+            {
+                // GO color puzzle
+                PropertyInfo typeValueProperty = typeof(EntityPreset).GetProperty("TypeValue");
+
+                Point circusPoint = Plugin.ArchipelagoManager.ColorPuzzle.CircusPos;
+                Point hotelPoint = Plugin.ArchipelagoManager.ColorPuzzle.HotelPos;
+                Point apartmentPoint = Plugin.ArchipelagoManager.ColorPuzzle.ApartmentPos;
+                typeValueProperty.SetValue(__instance, $"{circusPoint.X},{circusPoint.Y};{hotelPoint.X},{hotelPoint.Y};{apartmentPoint.X},{apartmentPoint.Y};1,1");
             }
         }
 
@@ -232,7 +219,7 @@ namespace AnodyneArchipelago.Patches
             Red_Pillar redPillar = (Red_Pillar)parentField.GetValue(__instance);
             EntityPreset preset = PatchHelper.GetEntityPreset(typeof(Red_Pillar), redPillar);
 
-            Plugin.Instance.Log.LogInfo($"Broke red chain: {preset.EntityID.ToString()}");
+            // Plugin.Instance.Log.LogInfo($"Broke red chain: {preset.EntityID.ToString()}");
 
             if (Locations.LocationsByGuid.ContainsKey(preset.EntityID))
             {
@@ -342,15 +329,33 @@ namespace AnodyneArchipelago.Patches
                 // Place a rock blocking access to Terminal without the red key.
                 PatchHelper.SetMapTile(31, 47, 11, Layer.BG);
             }
+            else if (GlobalState.CURRENT_MAP_NAME == "CIRCUS")
+            {
+                Point pos = Plugin.ArchipelagoManager.ColorPuzzle.CircusPos;
+
+                PatchHelper.SetMapTile(72, 15, 60, Layer.BG);
+                PatchHelper.SetMapTile(72 + pos.X, 11 + pos.Y, 46, Layer.BG);
+            }
+            else if (GlobalState.CURRENT_MAP_NAME == "HOTEL")
+            {
+                Point pos = Plugin.ArchipelagoManager.ColorPuzzle.HotelPos;
+
+                PatchHelper.SetMapTile(78, 116, 82, Layer.BG);
+                PatchHelper.SetMapTile(73 + pos.X, 113 + pos.Y, 31, Layer.BG);
+            }
+            else if (GlobalState.CURRENT_MAP_NAME == "APARTMENT")
+            {
+                Point pos = Plugin.ArchipelagoManager.ColorPuzzle.ApartmentPos;
+
+                PatchHelper.SetMapTile(86, 52, 153, Layer.BG);
+                PatchHelper.SetMapTile(82 + pos.X, 51 + pos.Y, 101, Layer.BG);
+            }
+            else if (GlobalState.CURRENT_MAP_NAME == "GO")
+            {
+                PatchHelper.SetMapTile(26, 33, 114, Layer.BG);
+                PatchHelper.SetMapTile(27, 35, 114, Layer.BG);
+                PatchHelper.SetMapTile(22, 36, 114, Layer.BG);
+            }
         }
     }
-
-    /*[HarmonyPatch(typeof(Player), "Movement")]
-    class PlayerMovementPatch
-    {
-        static void Postfix(Player __instance)
-        {
-            Plugin.Instance.Log.LogInfo($"Player pos: {GlobalState.Map.ToMapLoc(__instance.Position)}");
-        }
-    }*/
 }

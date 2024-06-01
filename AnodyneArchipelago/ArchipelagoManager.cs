@@ -21,6 +21,7 @@ namespace AnodyneArchipelago
         private int _itemIndex = 0;
         private string _seedName;
         private long _endgameCardRequirement = 36;
+        private ColorPuzzle _colorPuzzle = new();
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -28,6 +29,7 @@ namespace AnodyneArchipelago
         private Task<Dictionary<string, NetworkItem>> _scoutTask;
 
         public long EndgameCardRequirement => _endgameCardRequirement;
+        public ColorPuzzle ColorPuzzle => _colorPuzzle;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -57,6 +59,9 @@ namespace AnodyneArchipelago
             }
 
             _scoutTask = Task.Run(() => ScoutAllLocations());
+
+            Random rand = new Random((int)(long)login.SlotData["seed"]);
+            _colorPuzzle.Initialize(rand);
 
             return result;
         }
