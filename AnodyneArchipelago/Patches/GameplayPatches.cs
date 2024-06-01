@@ -124,7 +124,7 @@ namespace AnodyneArchipelago.Patches
     [HarmonyPatch(typeof(EntityPreset), nameof(EntityPreset.Create))]
     class EntityPresetCreatePatch
     {
-        static void Prefix(EntityPreset __instance)
+        static bool Prefix(EntityPreset __instance, ref Entity __result)
         {
             if (__instance.EntityID == new Guid("C8CE6E18-CF07-180B-A550-9DC808A2F7E3"))
             {
@@ -142,6 +142,16 @@ namespace AnodyneArchipelago.Patches
                 Point apartmentPoint = Plugin.ArchipelagoManager.ColorPuzzle.ApartmentPos;
                 typeValueProperty.SetValue(__instance, $"{circusPoint.X},{circusPoint.Y};{hotelPoint.X},{hotelPoint.Y};{apartmentPoint.X},{apartmentPoint.Y};1,1");
             }
+            else if (__instance.Type.FullName == "AnodyneSharp.Entities.Gadget.SmallKeyGate")
+            {
+                if (Plugin.ArchipelagoManager.UnlockSmallKeyGates)
+                {
+                    __result = new Entity(new Vector2(0, 0));
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         static void Postfix(EntityPreset __instance, Entity __result)

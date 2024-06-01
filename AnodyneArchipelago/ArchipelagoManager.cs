@@ -22,6 +22,7 @@ namespace AnodyneArchipelago
         private string _seedName;
         private long _endgameCardRequirement = 36;
         private ColorPuzzle _colorPuzzle = new();
+        private bool _unlockSmallKeyGates = false;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -30,6 +31,7 @@ namespace AnodyneArchipelago
 
         public long EndgameCardRequirement => _endgameCardRequirement;
         public ColorPuzzle ColorPuzzle => _colorPuzzle;
+        public bool UnlockSmallKeyGates => _unlockSmallKeyGates;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -58,10 +60,22 @@ namespace AnodyneArchipelago
                 _endgameCardRequirement = (long)login.SlotData["endgame_card_requirement"];
             }
 
-            _scoutTask = Task.Run(() => ScoutAllLocations());
+            if (login.SlotData.ContainsKey("seed"))
+            {
+                Random rand = new Random((int)(long)login.SlotData["seed"]);
+                _colorPuzzle.Initialize(rand);
+            }
 
-            Random rand = new Random((int)(long)login.SlotData["seed"]);
-            _colorPuzzle.Initialize(rand);
+            if (login.SlotData.ContainsKey("unlock_gates"))
+            {
+                _unlockSmallKeyGates = (bool)login.SlotData["unlock_gates"];
+            }
+            else
+            {
+                _unlockSmallKeyGates = false;
+            }
+
+            _scoutTask = Task.Run(() => ScoutAllLocations());
 
             return result;
         }
