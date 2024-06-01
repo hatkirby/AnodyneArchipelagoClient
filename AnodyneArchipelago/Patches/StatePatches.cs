@@ -145,7 +145,11 @@ namespace AnodyneArchipelago.Patches
         static void Postfix()
         {
             Plugin.IsGamePaused = true;
-            Plugin.ArchipelagoManager.ActivateGoal();
+
+            if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.AllBosses)
+            {
+                Plugin.ArchipelagoManager.ActivateGoal();
+            }
         }
     }
 

@@ -24,6 +24,12 @@ namespace AnodyneArchipelago
         DifferentWorld = 5,
     }
 
+    public enum VictoryCondition
+    {
+        AllBosses = 0,
+        AllCards = 1,
+    }
+
     public class ArchipelagoManager
     {
         private ArchipelagoSession _session;
@@ -39,6 +45,7 @@ namespace AnodyneArchipelago
         private bool _vanillaRedCave = false;
         private bool _splitWindmill = false;
         private bool _forestBunnyChest = false;
+        private VictoryCondition _victoryCondition;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -56,6 +63,7 @@ namespace AnodyneArchipelago
         public bool VanillaRedCave => _vanillaRedCave;
         public bool SplitWindmill => _splitWindmill;
         public bool ForestBunnyChest => _forestBunnyChest;
+        public VictoryCondition VictoryCondition => _victoryCondition;
 
         public bool DeathLinkEnabled => _deathLinkService != null;
 
@@ -156,6 +164,15 @@ namespace AnodyneArchipelago
             else
             {
                 _forestBunnyChest = false;
+            }
+
+            if (login.SlotData.ContainsKey("victory_condition"))
+            {
+                _victoryCondition = (VictoryCondition)(long)login.SlotData["victory_condition"];
+            }
+            else
+            {
+                _victoryCondition = VictoryCondition.AllBosses;
             }
 
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])

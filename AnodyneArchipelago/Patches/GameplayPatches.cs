@@ -16,6 +16,7 @@ using AnodyneSharp.Sounds;
 using AnodyneSharp.States;
 using AnodyneSharp.Entities.Interactive.Npc;
 using AnodyneSharp.MapData;
+using AnodyneSharp;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -426,6 +427,23 @@ namespace AnodyneArchipelago.Patches
                 PatchHelper.SetMapTile(26, 33, 114, Layer.BG);
                 PatchHelper.SetMapTile(27, 35, 114, Layer.BG);
                 PatchHelper.SetMapTile(22, 36, 114, Layer.BG);
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    class BlankConsoleInteractPatch
+    {
+        static MethodInfo TargetMethod()
+        {
+            return typeof(AnodyneGame).Assembly.GetType("AnodyneSharp.Entities.Interactive.Npc.Blank.BlankConsole").GetMethod("PlayerInteraction");
+        }
+
+        static void Postfix()
+        {
+            if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.AllCards)
+            {
+                Plugin.ArchipelagoManager.ActivateGoal();
             }
         }
     }
