@@ -95,6 +95,12 @@ namespace AnodyneArchipelago.Patches
     {
         static void Postfix(HealthCicada __instance)
         {
+            if (Plugin.ArchipelagoManager.VanillaHealthCicadas)
+            {
+                // Vanilla health cicadas should just use the default implementation.
+                return;
+            }
+
             Type cicadaType = typeof(HealthCicada);
             FieldInfo chirpField = cicadaType.GetField("_chirp", BindingFlags.NonPublic | BindingFlags.Instance);
             FieldInfo sentinelField = cicadaType.GetField("_sentinel", BindingFlags.NonPublic | BindingFlags.Instance);

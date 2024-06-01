@@ -33,6 +33,7 @@ namespace AnodyneArchipelago
         private ColorPuzzle _colorPuzzle = new();
         private bool _unlockSmallKeyGates = false;
         private BigKeyShuffle _bigKeyShuffle;
+        private bool _vanillaHealthCicadas = false;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -43,6 +44,7 @@ namespace AnodyneArchipelago
         public ColorPuzzle ColorPuzzle => _colorPuzzle;
         public bool UnlockSmallKeyGates => _unlockSmallKeyGates;
         public BigKeyShuffle BigKeyShuffle => _bigKeyShuffle;
+        public bool VanillaHealthCicadas => _vanillaHealthCicadas;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -93,6 +95,15 @@ namespace AnodyneArchipelago
             else
             {
                 _bigKeyShuffle = BigKeyShuffle.AnyWorld;
+            }
+
+            if (login.SlotData.ContainsKey("vanilla_health_cicadas"))
+            {
+                _vanillaHealthCicadas = (bool)login.SlotData["vanilla_health_cicadas"];
+            }
+            else
+            {
+                _vanillaHealthCicadas = false;
             }
 
             _scoutTask = Task.Run(() => ScoutAllLocations());
