@@ -4,6 +4,7 @@ using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
 using Archipelago.MultiClient.Net;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Models;
@@ -28,6 +29,8 @@ namespace AnodyneArchipelago
     {
         private ArchipelagoSession _session;
         private int _itemIndex = 0;
+        private DeathLinkService _deathLinkService;
+
         private string _seedName;
         private long _endgameCardRequirement = 36;
         private ColorPuzzle _colorPuzzle = new();
@@ -38,6 +41,9 @@ namespace AnodyneArchipelago
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
+        private DeathLink? _pendingDeathLink = null;
+        private string _deathLinkReason = null;
+        private bool _receiveDeath = false;
 
         private Task<Dictionary<string, NetworkItem>> _scoutTask;
 
@@ -47,6 +53,19 @@ namespace AnodyneArchipelago
         public BigKeyShuffle BigKeyShuffle => _bigKeyShuffle;
         public bool VanillaHealthCicadas => _vanillaHealthCicadas;
         public bool VanillaRedCave => _vanillaRedCave;
+        public bool DeathLinkEnabled => _deathLinkService != null;
+
+        public bool ReceivedDeath
+        {
+            get { return _receiveDeath; }
+            set { _receiveDeath = value; }
+        }
+
+        public string DeathLinkReason
+        {
+            get { return _deathLinkReason; }
+            set { _deathLinkReason = value; }
+        }
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -115,6 +134,20 @@ namespace AnodyneArchipelago
             else
             {
                 _vanillaRedCave = false;
+            }
+
+            if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])
+            {
+                _deathLinkReason = null;
+                _receiveDeath = false;
+
+                _deathLinkService = _session.CreateDeathLinkService();
+                _deathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
+                _deathLinkService.EnableDeathLink();
+            }
+            else
+            {
+                _deathLinkService = null;
             }
 
             _scoutTask = Task.Run(() => ScoutAllLocations());
@@ -228,6 +261,24 @@ namespace AnodyneArchipelago
                 else if (_messages.Count > 0)
                 {
                     GlobalState.Dialogue = _messages.Dequeue();
+                }
+                else if (_pendingDeathLink != null)
+                {
+                    GlobalState.CUR_HEALTH = 0;
+
+                    string message;
+                    if (_pendingDeathLink.Cause == null)
+                    {
+                        message = $"Received death from {_pendingDeathLink.Source}.";
+                    }
+                    else
+                    {
+                        message = $"Received death. Cause: {_pendingDeathLink.Cause}";
+                    }
+
+                    _pendingDeathLink = null;
+                    _deathLinkReason = message;
+                    _receiveDeath = true;
                 }
             }
         }
@@ -409,6 +460,21 @@ namespace AnodyneArchipelago
                     }
                     break;
             }
+        }
+
+        public void SendDeath()
+        {
+            if (_deathLinkService != null)
+            {
+                _deathLinkService.SendDeathLink(new DeathLink(_session.Players.GetPlayerName(_session.ConnectionInfo.Slot), _deathLinkReason));
+            }
+
+            _deathLinkReason = null;
+        }
+
+        private void OnDeathLinkReceived(DeathLink deathLink)
+        {
+            _pendingDeathLink = deathLink;
         }
     }
 }

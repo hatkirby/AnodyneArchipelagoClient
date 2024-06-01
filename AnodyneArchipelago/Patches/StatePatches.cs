@@ -15,6 +15,7 @@ using BepInEx;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using AnodyneSharp.UI;
 
 namespace AnodyneArchipelago.Patches
 {
@@ -112,6 +113,8 @@ namespace AnodyneArchipelago.Patches
                 GlobalState.events.SetEvent("red_cave_n_ss", 999);
                 GlobalState.events.SetEvent("red_cave_r_ss", 999);
             }
+
+            Plugin.ArchipelagoManager.DeathLinkReason = null;
         }
     }
 
@@ -157,6 +160,34 @@ namespace AnodyneArchipelago.Patches
             FieldInfo texturesField = typeof(ResourceManager).GetField("_textures", BindingFlags.NonPublic | BindingFlags.Static);
             Dictionary<string, Texture2D> textures = (Dictionary<string, Texture2D>)texturesField.GetValue(null);
             textures["archipelago"] = apSprite;
+        }
+    }
+
+    [HarmonyPatch(typeof(DeathState), MethodType.Constructor, new Type[] {typeof(Player)})]
+    static class DeathStateCtorPatch
+    {
+        static void Postfix(DeathState __instance)
+        {
+            if (Plugin.ArchipelagoManager.DeathLinkEnabled)
+            {
+                if (Plugin.ArchipelagoManager.ReceivedDeath)
+                {
+                    string message = Plugin.ArchipelagoManager.DeathLinkReason ?? "Received unknown death.";
+                    message = Util.WordWrap(message, 20);
+
+                    FieldInfo labelInfo = typeof(DeathState).GetField("_continueLabel", BindingFlags.NonPublic | BindingFlags.Instance);
+                    UILabel label = (UILabel)labelInfo.GetValue(__instance);
+                    label.SetText(message);
+                    label.Position = new Vector2(8, 8);
+
+                    Plugin.ArchipelagoManager.ReceivedDeath = false;
+                    Plugin.ArchipelagoManager.DeathLinkReason = null;
+                }
+                else
+                {
+                    Plugin.ArchipelagoManager.SendDeath();
+                }
+            }
         }
     }
 }
