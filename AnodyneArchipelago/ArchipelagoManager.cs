@@ -1,5 +1,4 @@
 ﻿using AnodyneSharp.Entities;
-using AnodyneSharp.Entities.Enemy.Redcave;
 using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
@@ -297,6 +296,63 @@ namespace AnodyneArchipelago
             }
         }
 
+        private static int GetCardNumberForName(string name)
+        {
+            switch (name)
+            {
+                case "Edward": return 0;
+                case "Annoyer": return 1;
+                case "Seer": return 2;
+                case "Shieldy": return 3;
+                case "Slime": return 4;
+                case "PewLaser": return 5;
+                case "Suburbian": return 6;
+                case "Watcher": return 7;
+                case "Silverfish": return 8;
+                case "Gas Guy": return 9;
+                case "Mitra": return 10;
+                case "Miao": return 11;
+                case "Windmill": return 12;
+                case "Mushroom": return 13;
+                case "Dog": return 14;
+                case "Rock": return 15;
+                case "Fisherman": return 16;
+                case "Walker": return 17;
+                case "Mover": return 18;
+                case "Slasher": return 19;
+                case "Rogue": return 20;
+                case "Chaser": return 21;
+                case "Fire Pillar": return 22;
+                case "Contorts": return 23;
+                case "Lion": return 24;
+                case "Arthur and Javiera": return 25;
+                case "Frog": return 26;
+                case "Person": return 27;
+                case "Wall": return 28;
+                case "Blue Cube King": return 29;
+                case "Orange Cube King": return 30;
+                case "Dust Maid": return 31;
+                case "Dasher": return 32;
+                case "Burst Plant": return 33;
+                case "Manager": return 34;
+                case "Sage": return 35;
+                case "Young": return 36;
+                case "Carved Rock": return 37;
+                case "City Man": return 38;
+                case "Intra": return 39;
+                case "Torch": return 40;
+                case "Triangle NPC": return 41;
+                case "Killer": return 42;
+                case "Goldman": return 43;
+                case "Broom": return 44;
+                case "Rank": return 45;
+                case "Follower": return 46;
+                case "Rock Creature": return 47;
+                case "Null": return 48;
+                default: return 0;
+            }
+        }
+
         private void HandleItem(NetworkItem item)
         {
             if (item.Player == _session.ConnectionInfo.Slot && item.Location >= 0)
@@ -398,14 +454,12 @@ namespace AnodyneArchipelago
             {
                 GlobalState.events.IncEvent("ProgressiveRedGrotto");
             }
-            else if (itemName == "Card")
+            else if (itemName.StartsWith("Card ("))
             {
-                int cardIndex = GlobalState.inventory.CardCount;
-                if (cardIndex >= 19)
-                {
-                    cardIndex += 1;
-                }
+                string cardName = itemName.Substring(6);
+                cardName = cardName.Substring(0, cardName.Length - 1);
 
+                int cardIndex = GetCardNumberForName(cardName);
                 CardTreasure cardTreasure = new(Plugin.Player.Position, cardIndex);
                 cardTreasure.GetTreasure();
                 GlobalState.SpawnEntity(cardTreasure);
