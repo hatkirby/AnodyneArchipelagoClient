@@ -37,6 +37,7 @@ namespace AnodyneArchipelago
         private BigKeyShuffle _bigKeyShuffle;
         private bool _vanillaHealthCicadas = false;
         private bool _vanillaRedCave = false;
+        private bool _splitWindmill = false;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -52,6 +53,8 @@ namespace AnodyneArchipelago
         public BigKeyShuffle BigKeyShuffle => _bigKeyShuffle;
         public bool VanillaHealthCicadas => _vanillaHealthCicadas;
         public bool VanillaRedCave => _vanillaRedCave;
+        public bool SplitWindmill => _splitWindmill;
+
         public bool DeathLinkEnabled => _deathLinkService != null;
 
         public bool ReceivedDeath
@@ -133,6 +136,15 @@ namespace AnodyneArchipelago
             else
             {
                 _vanillaRedCave = false;
+            }
+
+            if (login.SlotData.ContainsKey("split_windmill"))
+            {
+                _splitWindmill = (bool)login.SlotData["split_windmill"];
+            }
+            else
+            {
+                _splitWindmill = false;
             }
 
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])

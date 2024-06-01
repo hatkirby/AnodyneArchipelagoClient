@@ -192,6 +192,11 @@ namespace AnodyneArchipelago.Patches
         {
             if (__instance.Type.FullName == "AnodyneSharp.Entities.Interactive.DungeonStatue")
             {
+                if (!Plugin.ArchipelagoManager.SplitWindmill)
+                {
+                    return;
+                }
+
                 __result.Position = __instance.Position + new Vector2(1f, 32f);
 
                 string eventName = "StatueMoved_";
@@ -292,7 +297,7 @@ namespace AnodyneArchipelago.Patches
                 __result = false;
                 return false;
             }
-                
+
             __instance.Play("open");
             SoundManager.PlaySoundEffect("broom_hit");
             GlobalState.StartCutscene = OnOpened(__instance);
@@ -366,13 +371,18 @@ namespace AnodyneArchipelago.Patches
     {
         static void Prefix(object __instance)
         {
+            if (!Plugin.ArchipelagoManager.SplitWindmill)
+            {
+                return;
+            }
+
             if ((__instance as Entity).CurAnimName == "active")
             {
                 Plugin.ArchipelagoManager.SendLocation("Windmill - Activation");
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(PlayState), "Warp")]
     class PlayWarpPatch
     {
