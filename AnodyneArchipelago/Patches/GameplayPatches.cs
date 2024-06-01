@@ -217,6 +217,11 @@ namespace AnodyneArchipelago.Patches
             }
             else if (__instance.Type.FullName.StartsWith("AnodyneSharp.Entities.Decorations.RedCave"))
             {
+                if (Plugin.ArchipelagoManager.VanillaRedCave)
+                {
+                    return;
+                }
+
                 string side = __instance.Type.FullName.Substring(41);
                 int requiredGrottos = 0;
                 if (side == "Left")
@@ -257,6 +262,11 @@ namespace AnodyneArchipelago.Patches
 
         static void Postfix(object __instance)
         {
+            if (Plugin.ArchipelagoManager.VanillaRedCave)
+            {
+                return;
+            }
+
             Type chainType = typeof(Red_Pillar).GetNestedType("Chain", BindingFlags.NonPublic);
             FieldInfo parentField = chainType.GetField("_parent", BindingFlags.NonPublic | BindingFlags.Instance);
 

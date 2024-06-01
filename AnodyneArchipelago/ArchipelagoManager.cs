@@ -34,6 +34,7 @@ namespace AnodyneArchipelago
         private bool _unlockSmallKeyGates = false;
         private BigKeyShuffle _bigKeyShuffle;
         private bool _vanillaHealthCicadas = false;
+        private bool _vanillaRedCave = false;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -45,6 +46,7 @@ namespace AnodyneArchipelago
         public bool UnlockSmallKeyGates => _unlockSmallKeyGates;
         public BigKeyShuffle BigKeyShuffle => _bigKeyShuffle;
         public bool VanillaHealthCicadas => _vanillaHealthCicadas;
+        public bool VanillaRedCave => _vanillaRedCave;
 
         public async Task<LoginResult> Connect(string url, string slotName, string password)
         {
@@ -104,6 +106,15 @@ namespace AnodyneArchipelago
             else
             {
                 _vanillaHealthCicadas = false;
+            }
+
+            if (login.SlotData.ContainsKey("vanilla_red_cave"))
+            {
+                _vanillaRedCave = (bool)login.SlotData["vanilla_red_cave"];
+            }
+            else
+            {
+                _vanillaRedCave = false;
             }
 
             _scoutTask = Task.Run(() => ScoutAllLocations());
