@@ -52,6 +52,10 @@ namespace AnodyneArchipelago
             {
                 return ("small_health_pickup", 0);
             }
+            else if (itemName == "Broom")
+            {
+                return ("broom-icon", 0);
+            }
             else if (itemName == "Swap")
             {
                 return ("item_tranformer", 0);

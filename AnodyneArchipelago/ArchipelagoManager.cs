@@ -233,17 +233,41 @@ namespace AnodyneArchipelago
             {
                 GlobalState.CUR_HEALTH = GlobalState.MAX_HEALTH;
             }
+            else if (itemName == "Broom")
+            {
+                GlobalState.inventory.HasBroom = true;
+
+                if (GlobalState.inventory.EquippedBroom == BroomType.NONE)
+                {
+                    GlobalState.inventory.EquippedBroom = BroomType.Normal;
+                }
+            }
             else if (itemName == "Swap")
             {
                 GlobalState.inventory.HasTransformer = true;
+
+                if (GlobalState.inventory.EquippedBroom == BroomType.NONE)
+                {
+                    GlobalState.inventory.EquippedBroom = BroomType.Transformer;
+                }
             }
             else if (itemName == "Extend")
             {
                 GlobalState.inventory.HasLengthen = true;
+
+                if (GlobalState.inventory.EquippedBroom == BroomType.NONE)
+                {
+                    GlobalState.inventory.EquippedBroom = BroomType.Long;
+                }
             }
             else if (itemName == "Widen")
             {
                 GlobalState.inventory.HasWiden = true;
+
+                if (GlobalState.inventory.EquippedBroom == BroomType.NONE)
+                {
+                    GlobalState.inventory.EquippedBroom = BroomType.Wide;
+                }
             }
             else if (itemName == "Temple of the Seeing One Statue")
             {
