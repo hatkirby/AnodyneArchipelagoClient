@@ -69,7 +69,7 @@ namespace AnodyneArchipelago.Patches
             }
             else if (preset.Frame == 2)
             {
-                Plugin.ArchipelagoManager.SendLocation("Red Grotto - Red Key");
+                Plugin.ArchipelagoManager.SendLocation("Red Cave - Red Key");
             }
             else if (preset.Frame == 4)
             {

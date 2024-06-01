@@ -105,7 +105,7 @@ namespace AnodyneArchipelago.Patches
             FieldInfo playerField = typeof(PlayState).GetField("_player", BindingFlags.NonPublic | BindingFlags.Instance);
             Plugin.Player = (Player)playerField.GetValue(__instance);
 
-            // Handle Red Grotto stuff.
+            // Handle Red Cave stuff.
             GlobalState.events.SetEvent("red_cave_l_ss", 999);
             GlobalState.events.SetEvent("red_cave_n_ss", 999);
             GlobalState.events.SetEvent("red_cave_r_ss", 999);

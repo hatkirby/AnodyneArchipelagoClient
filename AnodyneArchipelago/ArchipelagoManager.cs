@@ -198,7 +198,7 @@ namespace AnodyneArchipelago
                 case "Apartment": return "APARTMENT";
                 case "Mountain Cavern": return "CROWD";
                 case "Hotel": return "HOTEL";
-                case "Red Grotto": return "REDCAVE";
+                case "Red Cave": return "REDCAVE";
                 case "Circus": return "CIRCUS";
                 default: return "STREET";
             }
@@ -297,11 +297,11 @@ namespace AnodyneArchipelago
             {
                 GlobalState.events.SetEvent("StatueMoved_Mountain", 1);
             }
-            else if (itemName == "Red Grotto Statue")
+            else if (itemName == "Red Cave Statue")
             {
                 GlobalState.events.SetEvent("StatueMoved_Grotto", 1);
             }
-            else if (itemName == "Progressive Red Grotto")
+            else if (itemName == "Progressive Red Cave")
             {
                 GlobalState.events.IncEvent("ProgressiveRedGrotto");
             }
