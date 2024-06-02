@@ -1,4 +1,5 @@
 ﻿using AnodyneSharp.Entities;
+using AnodyneSharp.Entities.Gadget;
 using AnodyneSharp.Entities.Gadget.Treasures;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
@@ -46,6 +47,7 @@ namespace AnodyneArchipelago
         private bool _splitWindmill = false;
         private bool _forestBunnyChest = false;
         private VictoryCondition _victoryCondition;
+        private List<string> _unlockedGates = new();
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -175,6 +177,15 @@ namespace AnodyneArchipelago
                 _victoryCondition = VictoryCondition.DefeatBriar;
             }
 
+            if (login.SlotData.ContainsKey("nexus_gates_unlocked"))
+            {
+                _unlockedGates = new(((Newtonsoft.Json.Linq.JArray)login.SlotData["nexus_gates_unlocked"]).Values<string>());
+            }
+            else
+            {
+                _unlockedGates = new();
+            }
+
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])
             {
                 _deathLinkReason = null;
@@ -192,6 +203,51 @@ namespace AnodyneArchipelago
             _scoutTask = Task.Run(() => ScoutAllLocations());
 
             return result;
+        }
+
+        public static string GetNexusGateMapName(string region)
+        {
+            switch (region)
+            {
+                case "Apartment floor 1": return "APARTMENT";
+                case "Beach": return "BEACH";
+                case "Bedroom exit": return "BEDROOM";
+                case "Blue": return "BLUE";
+                case "Cell": return "CELL";
+                case "Circus": return "CIRCUS";
+                case "Cliff": return "CLIFF";
+                case "Crowd floor 1": return "CROWD";
+                case "Fields": return "FIELDS";
+                case "Forest": return "FOREST";
+                case "Go bottom": return "GO";
+                case "Happy": return "HAPPY";
+                case "Hotel floor 4": return "HOTEL";
+                case "Overworld": return "OVERWORLD";
+                case "Red Cave top": return "REDCAVE";
+                case "Red Sea": return "REDSEA";
+                case "Suburb": return "SUBURB";
+                case "Space": return "SPACE";
+                case "Terminal": return "TERMINAL";
+                case "Windmill entrance": return "WINDMILL";
+                default: return "";
+            }
+        }
+
+        public void PostSaveloadInit()
+        {
+            foreach (string gate in _unlockedGates)
+            {
+                string mapName = GetNexusGateMapName(gate);
+                if (mapName.Length > 0)
+                {
+                    GlobalState.events.ActivatedNexusPortals.Add(mapName);
+                }
+            }
+
+            // Remove barriers from Nexus.
+            EntityManager.State[new Guid("AAAECAD4-F6A9-9756-31E0-C3813862E61B")] = new() { Alive = false };
+            EntityManager.State[new Guid("73FB3BC5-AC42-6439-75EF-8EE824DCF143")] = new() { Alive = false };
+            EntityManager.State[new Guid("335DD556-D1EF-06D5-24B4-DFACCCD59A28")] = new() { Alive = false };
         }
 
         ~ArchipelagoManager()

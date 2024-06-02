@@ -351,6 +351,8 @@ namespace AnodyneArchipelago.Menu
             }
 
             _fadingOut = true;
+
+            Plugin.ArchipelagoManager.PostSaveloadInit();
         }
     }
 }
