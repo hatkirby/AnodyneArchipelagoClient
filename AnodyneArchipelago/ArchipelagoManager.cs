@@ -26,7 +26,7 @@ namespace AnodyneArchipelago
 
     public enum VictoryCondition
     {
-        AllBosses = 0,
+        DefeatBriar = 0,
         AllCards = 1,
     }
 
@@ -172,7 +172,7 @@ namespace AnodyneArchipelago
             }
             else
             {
-                _victoryCondition = VictoryCondition.AllBosses;
+                _victoryCondition = VictoryCondition.DefeatBriar;
             }
 
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])

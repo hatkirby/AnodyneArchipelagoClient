@@ -146,7 +146,7 @@ namespace AnodyneArchipelago.Patches
         {
             Plugin.IsGamePaused = true;
 
-            if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.AllBosses)
+            if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.DefeatBriar)
             {
                 Plugin.ArchipelagoManager.ActivateGoal();
             }
