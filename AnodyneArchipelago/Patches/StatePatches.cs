@@ -150,6 +150,10 @@ namespace AnodyneArchipelago.Patches
             {
                 Plugin.ArchipelagoManager.ActivateGoal();
             }
+            else if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.AllCards)
+            {
+                Plugin.ArchipelagoManager.SendLocation("GO - Defeat Briar");
+            }
         }
     }
 
