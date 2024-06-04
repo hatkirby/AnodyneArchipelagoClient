@@ -4,28 +4,22 @@ using AnodyneSharp.States;
 using AnodyneSharp;
 using HarmonyLib;
 using System.Reflection;
-using AnodyneSharp.Drawing.Effects;
-using AnodyneSharp.States.MainMenu;
-using static AnodyneSharp.AnodyneGame;
-using AnodyneSharp.Drawing;
-using System.IO;
-using System;
 using AnodyneSharp.Resources;
-using BepInEx;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using AnodyneSharp.UI;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace AnodyneArchipelago.Patches
 {
-    [HarmonyPatch(typeof(AnodyneGame), "LoadContent")]
-    class AnodyneLoadContentPatch
+    [HarmonyPatch(typeof(AnodyneGame), "Initialize")]
+    class AnodyneGameInitializePatch
     {
         static void Prefix(AnodyneGame __instance)
         {
-            FieldInfo gdmField = typeof(AnodyneGame).GetField("graphics", BindingFlags.NonPublic | BindingFlags.Instance);
-            Plugin.GraphicsDevice = ((GraphicsDeviceManager)gdmField.GetValue(__instance)).GraphicsDevice;
+            Plugin.Game = __instance;
         }
     }
 
@@ -37,49 +31,6 @@ namespace AnodyneArchipelago.Patches
             if (Plugin.ArchipelagoManager != null)
             {
                 Plugin.ArchipelagoManager.Update();
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(AnodyneGame), "SetState")]
-    class SetStatePatch
-    {
-        // Pretty much rewrite this whole method, so that we can swap out some states.
-        static bool Prefix(AnodyneGame __instance, GameState state)
-        {
-            foreach (IFullScreenEffect effect in GlobalState.AllEffects)
-            {
-                effect.Deactivate();
-            }
-
-            State new_state = CreateState(__instance, state);
-
-            if (new_state != null)
-            {
-                new_state.Create();
-
-                MethodInfo setStateMethod = typeof(AnodyneGame).GetMethod("SetState", BindingFlags.NonPublic | BindingFlags.Instance);
-                new_state.ChangeStateEvent = (ChangeState)setStateMethod.CreateDelegate(typeof(ChangeState), __instance);
-            }
-
-            FieldInfo stateField = typeof(AnodyneGame).GetField("_currentState", BindingFlags.NonPublic | BindingFlags.Instance);
-            stateField.SetValue(__instance, new_state);
-
-            return false;
-        }
-
-        static State CreateState(AnodyneGame __instance, GameState state)
-        {
-            switch (state)
-            {
-                case GameState.TitleScreen: return new TitleState();
-                case GameState.MainMenu: return new Menu.MenuState();
-                case GameState.Intro: return new IntroState();
-                case GameState.Game:
-                    FieldInfo cameraField = typeof(AnodyneGame).GetField("_camera", BindingFlags.NonPublic | BindingFlags.Instance); 
-                    return new PlayState((Camera)cameraField.GetValue(__instance));
-                case GameState.Credits: return new CreditsState();
-                default: return null;
             }
         }
     }
@@ -172,8 +123,8 @@ namespace AnodyneArchipelago.Patches
     {
         static void Postfix()
         {
-            FileStream filestream = File.OpenRead($"{Paths.GameRootPath}\\Resources\\archipelago.png");
-            Texture2D apSprite = Texture2D.FromStream(Plugin.GraphicsDevice, filestream);
+            FileStream filestream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}\\Resources\\archipelago.png");
+            Texture2D apSprite = Texture2D.FromStream(Plugin.Game.GraphicsDevice, filestream);
 
             FieldInfo texturesField = typeof(ResourceManager).GetField("_textures", BindingFlags.NonPublic | BindingFlags.Static);
             Dictionary<string, Texture2D> textures = (Dictionary<string, Texture2D>)texturesField.GetValue(null);

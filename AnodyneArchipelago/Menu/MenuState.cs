@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace AnodyneArchipelago.Menu
 {
-    internal class MenuState : AnodyneSharp.States.State
+    internal abstract class BaseMenuState : AnodyneSharp.States.State
     {
         private MenuSelector _selector;
         private UILabel _versionLabel1;
@@ -38,7 +38,7 @@ namespace AnodyneArchipelago.Menu
         private int _selectorIndex = 0;
 
         private bool _fadingOut = false;
-        private bool _isNewGame;
+        protected bool _isNewGame;
 
         public override void Create()
         {
@@ -58,7 +58,7 @@ namespace AnodyneArchipelago.Menu
             _selector.Play("enabledRight");
 
             _versionLabel1 = new(new Vector2(10f, 7f), false, "AnodyneArchipelago", new Color(116, 140, 144));
-            _versionLabel2 = new(new Vector2(10f, 15f), false, $"v{Plugin.GetVersion()}", new Color(116, 140, 144));
+            _versionLabel2 = new(new Vector2(10f, 15f), false, $"v{Plugin.Version}", new Color(116, 140, 144));
             _serverLabel = new(new Vector2(10f, 31f), false, $"Server:", new Color(226, 226, 226));
             _serverValue = new(new Vector2(18f, 39f), false, "", new Color());
             _slotLabel = new(new Vector2(10f, 51f), false, $"Slot:", new Color(226, 226, 226));
@@ -97,7 +97,7 @@ namespace AnodyneArchipelago.Menu
 
                 if (GlobalState.black_overlay.alpha == 1.0)
                 {
-                    ChangeStateEvent(_isNewGame ? AnodyneSharp.AnodyneGame.GameState.Intro : AnodyneSharp.AnodyneGame.GameState.Game);
+                    ChangeState();
                 }
 
                 return;
@@ -354,5 +354,7 @@ namespace AnodyneArchipelago.Menu
 
             Plugin.ArchipelagoManager.PostSaveloadInit();
         }
+
+        protected abstract void ChangeState();
     }
 }

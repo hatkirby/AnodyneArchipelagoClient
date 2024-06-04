@@ -35,6 +35,10 @@ randomizer will remember the details of your last nine unique connections.
 If you are not testing local changes to the source code, skip this section and
 read the Installation section instead.
 
+### Steam Version
+
+This is the `AnodyneArchipelago.BepInEx` sub-project.
+
 The `AnodyneArchipelago` project depends on several other assemblies. These can
 be found either in the BepInEx project or in the `AnodyneSharp.exe` folder. The
 BepInEx assemblies used, as well as the mod launcher itself, must be compiled
@@ -55,6 +59,13 @@ The layout of the `AnodyneArchipelago` release is as follows:
 - A folder called `BepInEx`, containing two subfolders: `config`, which contains
   `BepInEx.cfg` from the repository root, and `plugins`, which contains
   `AnodyneArchipelago.dll` itself.
+
+### MonoGame Version
+
+Modding support is being added to
+[the MonoGame version of Anodyne](https://github.com/PixieCatSupreme/AnodyneSharp/).
+There is experimental support for using this mod with it, using the
+`AnodyneArchipelago.MonoGame` sub-project.
 
 ## Frequently Asked Questions
 

@@ -22,7 +22,7 @@ namespace AnodyneArchipelago.Menu
         private Task<LoginResult> _connectionTask;
         private ArchipelagoManager _archipelago = new();
 
-        private TextWriter _textWriter;
+        private AnodyneSharp.UI.Text.TextWriter _textWriter;
         private UIEntity _bgBox;
         private readonly SpriteFont _font;
 
@@ -117,7 +117,7 @@ namespace AnodyneArchipelago.Menu
             _textWriter.Text = _text;
             _textWriter.ProgressTextToEnd();
 
-            FieldInfo linesField = typeof(TextWriter).GetField("_line", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo linesField = typeof(AnodyneSharp.UI.Text.TextWriter).GetField("_line", BindingFlags.NonPublic | BindingFlags.Instance);
             int lineValue = (int)linesField.GetValue(_textWriter);
 
             int innerHeight = (lineValue + 1) * _font.lineSeparation;

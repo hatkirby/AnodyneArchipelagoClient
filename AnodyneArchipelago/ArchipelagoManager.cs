@@ -328,7 +328,7 @@ namespace AnodyneArchipelago
         {
             if (_session == null)
             {
-                Plugin.Instance.Log.LogError("Attempted to send location while disconnected");
+                //Plugin.Instance.Log.LogError("Attempted to send location while disconnected");
                 return;
             }
 

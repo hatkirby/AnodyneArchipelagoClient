@@ -48,4 +48,6 @@
       <HintPath>..\..\BepInEx\bin\NET.Framework\net462\System.ValueTuple.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <Import Project="..\AnodyneArchipelago\AnodyneArchipelago.projitems" Label="Shared" />
 </Project>

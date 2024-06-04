@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AnodyneArchipelago.Menu
 {
-    internal class TextEntry : State
+    internal class BaseTextEntry : State
     {
         public delegate void CommitChange(string value);
 
@@ -20,7 +20,7 @@ namespace AnodyneArchipelago.Menu
         private UILabel _valueLabel;
         private UIEntity _bgBox;
 
-        public TextEntry(string header, string value, CommitChange commitFunc)
+        public BaseTextEntry(string header, string value, CommitChange commitFunc)
         {
             _header = header;
             _value = value;
@@ -30,13 +30,10 @@ namespace AnodyneArchipelago.Menu
             _valueLabel = new(new Vector2(20f, 52f), false, "", new Color(), AnodyneSharp.Drawing.DrawOrder.TEXT);
             _bgBox = new UIEntity(new Vector2(16f, 40f), "pop_menu", 16, 16, AnodyneSharp.Drawing.DrawOrder.TEXTBOX);
 
-            TextInputEXT.TextInput += OnTextInput;
-            TextInputEXT.StartTextInput();
-
             UpdateDisplay();
         }
 
-        private void OnTextInput(char ch)
+        protected void OnTextInput(char ch)
         {
             if (ch == '\b')
             {
@@ -48,7 +45,7 @@ namespace AnodyneArchipelago.Menu
             }
             else if (ch == 22)
             {
-                _value += SDL2.SDL.SDL_GetClipboardText();
+                _value += Functions.GetClipboard();
                 UpdateDisplay();
             }
             else if (!char.IsControl(ch))
@@ -70,12 +67,6 @@ namespace AnodyneArchipelago.Menu
                 SoundManager.PlaySoundEffect("menu_select");
                 _commitFunc(_value);
                 this.Exit = true;
-            }
-
-            if (this.Exit)
-            {
-                TextInputEXT.StopTextInput();
-                TextInputEXT.TextInput -= OnTextInput;
             }
         }
 
