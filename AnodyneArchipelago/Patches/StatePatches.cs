@@ -114,7 +114,11 @@ namespace AnodyneArchipelago.Patches
                 GlobalState.events.SetEvent("red_cave_r_ss", 999);
             }
 
+            // Reset death link info.
             Plugin.ArchipelagoManager.DeathLinkReason = null;
+
+            // Pretend we're always in a pre-credits state so that swap is an allowlist, not a denylist.
+            GlobalState.events.SetEvent("SeenCredits", 0);
         }
     }
 
@@ -145,6 +149,12 @@ namespace AnodyneArchipelago.Patches
         static void Postfix()
         {
             Plugin.IsGamePaused = true;
+
+            GlobalState.events.SetEvent("DefeatedBriar", 1);
+            if (Plugin.ArchipelagoManager.PostgameMode == PostgameMode.Vanilla)
+            {
+                Plugin.ArchipelagoManager.EnableExtendedSwap();
+            }
 
             if (Plugin.ArchipelagoManager.VictoryCondition == VictoryCondition.DefeatBriar)
             {

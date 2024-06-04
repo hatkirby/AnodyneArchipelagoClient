@@ -447,4 +447,32 @@ namespace AnodyneArchipelago.Patches
             }
         }
     }
+
+    [HarmonyPatch(typeof(SwapperControl), MethodType.Constructor, new Type[] {typeof(string)})]
+    class SwapperControlCtorPatch
+    {
+        static void Postfix(SwapperControl __instance, string mapName)
+        {
+            Type regionType = typeof(SwapperControl).GetNestedType("Region", BindingFlags.NonPublic);
+            FieldInfo allowField = regionType.GetField("allow");
+            FieldInfo areaField = regionType.GetField("area");
+
+            Type listType = typeof(List<>).MakeGenericType(new Type[] { regionType });
+            MethodInfo addMethod = listType.GetMethod("Add");
+            object regions = Activator.CreateInstance(listType);
+
+            List<Rectangle> data = SwapData.GetRectanglesForMap(mapName, GlobalState.events.GetEvent("ExtendedSwap") == 1);
+            foreach (Rectangle rectangle in data)
+            {
+                object region = Activator.CreateInstance(regionType);
+                allowField.SetValue(region, SwapperControl.State.Allow);
+                areaField.SetValue(region, rectangle);
+
+                addMethod.Invoke(regions, new object[] { region });
+            }
+
+            FieldInfo regionsField = typeof(SwapperControl).GetField("regions", BindingFlags.NonPublic | BindingFlags.Instance);
+            regionsField.SetValue(__instance, regions);
+        }
+    }
 }

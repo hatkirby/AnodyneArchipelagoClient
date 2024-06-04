@@ -1,6 +1,6 @@
 ﻿using AnodyneSharp.Entities;
-using AnodyneSharp.Entities.Gadget;
 using AnodyneSharp.Entities.Gadget.Treasures;
+using AnodyneSharp.MapData;
 using AnodyneSharp.Registry;
 using AnodyneSharp.Sounds;
 using Archipelago.MultiClient.Net;
@@ -12,6 +12,7 @@ using Archipelago.MultiClient.Net.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AnodyneArchipelago
@@ -31,6 +32,14 @@ namespace AnodyneArchipelago
         AllCards = 1,
     }
 
+    public enum PostgameMode
+    {
+        Disabled = 0,
+        Vanilla = 1,
+        Unlocked = 2,
+        Progression = 3,
+    }
+
     public class ArchipelagoManager
     {
         private ArchipelagoSession _session;
@@ -48,6 +57,7 @@ namespace AnodyneArchipelago
         private bool _forestBunnyChest = false;
         private VictoryCondition _victoryCondition;
         private List<string> _unlockedGates = new();
+        private PostgameMode _postgameMode;
 
         private readonly Queue<NetworkItem> _itemsToCollect = new();
         private readonly Queue<string> _messages = new();
@@ -66,6 +76,7 @@ namespace AnodyneArchipelago
         public bool SplitWindmill => _splitWindmill;
         public bool ForestBunnyChest => _forestBunnyChest;
         public VictoryCondition VictoryCondition => _victoryCondition;
+        public PostgameMode PostgameMode => _postgameMode;
 
         public bool DeathLinkEnabled => _deathLinkService != null;
 
@@ -184,6 +195,15 @@ namespace AnodyneArchipelago
             else
             {
                 _unlockedGates = new();
+            }
+
+            if (login.SlotData.ContainsKey("postgame_mode"))
+            {
+                _postgameMode = (PostgameMode)(long)login.SlotData["postgame_mode"];
+            }
+            else
+            {
+                _postgameMode = PostgameMode.Disabled;
             }
 
             if (login.SlotData.ContainsKey("death_link") && (bool)login.SlotData["death_link"])
@@ -514,6 +534,34 @@ namespace AnodyneArchipelago
                 {
                     GlobalState.inventory.EquippedBroom = BroomType.Transformer;
                 }
+
+                if ((_postgameMode == PostgameMode.Vanilla && GlobalState.events.GetEvent("DefeatedBriar") > 0) ||
+                    _postgameMode == PostgameMode.Unlocked)
+                {
+                    EnableExtendedSwap();
+                }
+            }
+            else if (itemName == "Progressive Swap")
+            {
+                GlobalState.inventory.HasTransformer = true;
+
+                if (GlobalState.inventory.EquippedBroom == BroomType.NONE)
+                {
+                    GlobalState.inventory.EquippedBroom = BroomType.Transformer;
+                }
+
+                GlobalState.events.IncEvent("SwapStage");
+
+                if (GlobalState.events.GetEvent("SwapStage") > 1)
+                {
+                    EnableExtendedSwap();
+
+                    itemName = "Progressive Swap (Extended)";
+                }
+                else
+                {
+                    itemName = "Progressive Swap (Limited)";
+                }
             }
             else if (itemName == "Extend")
             {
@@ -632,6 +680,22 @@ namespace AnodyneArchipelago
         private void OnDeathLinkReceived(DeathLink deathLink)
         {
             _pendingDeathLink = deathLink;
+        }
+
+        public void EnableExtendedSwap()
+        {
+            GlobalState.events.SetEvent("ExtendedSwap", 1);
+
+            if (GlobalState.Map != null)
+            {
+                // Refresh current map swap data.
+                FieldInfo nameField = typeof(Map).GetField("mapName", BindingFlags.NonPublic | BindingFlags.Instance);
+                string mapName = (string)nameField.GetValue(GlobalState.Map);
+
+                FieldInfo swapperField = typeof(Map).GetField("swapper", BindingFlags.NonPublic | BindingFlags.Instance);
+                SwapperControl swapper = new(mapName);
+                swapperField.SetValue(GlobalState.Map, swapper);
+            }
         }
     }
 }
