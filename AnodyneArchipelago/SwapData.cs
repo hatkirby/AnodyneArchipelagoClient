@@ -17,6 +17,7 @@ namespace AnodyneArchipelago
                         new Rectangle(0, 768, 48, 48),       // Left edge, to get out of bounds
                         new Rectangle(688, 1072, 48, 64),    // Bottom edge, to get to secret chest
                     };
+                    case "BEDROOM": return new() { new Rectangle(832, 368, 256, 416) };
                     case "BLANK": return new() {
                         new Rectangle(0, 0, 480, 960),       // Left half
                         new Rectangle(640, 0, 320, 1120),    // Right half

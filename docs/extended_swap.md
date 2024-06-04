@@ -14,7 +14,9 @@ The swappable areas are marked in red:
 ![Swappable areas in BEACH](https://github.com/hatkirby/AnodyneArchipelagoClient/blob/main/docs/images/beach.png?raw=true)
 
 ## Bedroom
-Swap is not available on this map.
+The swappable areas are marked in red:
+
+![Swappable areas in BEDROOM](https://github.com/hatkirby/AnodyneArchipelagoClient/blob/main/docs/images/bedroom.png?raw=true)
 
 ## Blank
 This map has the vanilla post-Briar behavior, i.e. the entire map is Swappable, apart from the 50 Card Gate area.
