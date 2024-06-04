@@ -59,7 +59,9 @@ The swappable areas are marked in red:
 Swap is not available on this map.
 
 ## Hotel
-This map has the vanilla pre-Briar behavior, i.e. you can only swap in the post-boss room.
+The swappable areas are marked in red:
+
+![Swappable areas in HOTEL](https://github.com/hatkirby/AnodyneArchipelagoClient/blob/main/docs/images/hotel.png?raw=true)
 
 ## Nexus
 Swap is not available on this map.
