@@ -28,7 +28,8 @@ namespace AnodyneArchipelago
                         new Rectangle(208, 192, 176, 112),   // Near terminal secret chest
                         new Rectangle(736, 336, 208, 144),   // Near overworld secret chest
                         new Rectangle(1488, 1120, 256, 160), // Secret glen
-                        new Rectangle(1648, 1488, 112, 96),  // Blocked river
+                        new Rectangle(1296, 1600, 128, 160), // Blocked river 1
+                        new Rectangle(1648, 1488, 112, 96),  // Blocked river 2
                     };
                     case "FOREST": return new() { new Rectangle(0, 0, 800, 1440) };
                     case "GO": return new() {
