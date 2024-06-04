@@ -37,7 +37,7 @@ namespace AnodyneArchipelago
                         new Rectangle(32, 656, 208, 128),    // Secret color puzzle
                     };
                     case "HOTEL": return new() { new Rectangle(1280, 1760, 161, 161) };
-                    case "OVERWORLD": return new() { new Rectangle(16, 480, 272, 640) };
+                    case "OVERWORLD": return new() { new Rectangle(16, 480, 272, 176) };
                     case "REDSEA": return new() { new Rectangle(160, 800, 160, 160) };
                     case "SUBURB": return new() { new Rectangle(320, 640, 160, 160) };
                     case "STREET": return new() { new Rectangle(160, 864, 160, 160) };
