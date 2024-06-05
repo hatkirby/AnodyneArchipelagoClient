@@ -1,9 +1,16 @@
 # Extended Swap
+The Broom's Swap upgrade allows you to select two reachable tiles and swap them. When you first acquire the Swap, its use is very limited. You are only able to use it on the color puzzle in GO, as well as in the post-boss rooms in Apartment, Circus, and Hotel (which contain the hints needed to solve the GO color puzzle). The limited Swap in the modded game behaves exactly like this.
+
 After defeating the Briar in the base game, the Broom's Swap upgrade is fully unlocked, allowing you to use the ability almost everywhere in the game. This gives you access to several postgame items and areas that are otherwise unreachable. However, it also breaks through almost every progression barrier in the game, which destroys Archipelago's logic.
 
-To remedy this, the fully unlocked Swap ability never becomes available in the modded game. Instead, an "Extended Swap" can be unlocked, depending on what your postgame mode is. If it is set to Vanilla, this unlocks once you defeat Briar (as long as you have the Swap item, of course). If it is set to Unlocked, Extended Swap immediately becomes available upon receiving the Swap item. If it is set to Progressive, the first Progressive Swap you receive gives you the limited Swap from the base game (in which it is only usable in the single post-boss rooms in Hotel, Apartment, and Circus, as well as the GO color puzzle), and the second Progressive Swap you receive unlocks Extended Swap.
+To remedy this, the fully unlocked Swap ability never becomes available in the modded game. Instead, an "Extended Swap" can be unlocked, depending on what your postgame mode is.
 
-Extended Swap expands the swappable areas to include terrain near postgame content. This allows you to use Swap to access these areas, without completely destroying logic. These areas are not indicated clearly in-game, but you can use this file to see where they are.
+* **Disabled**: You only ever have access to the limited Swap described above.
+* **Vanilla**: The Swap item is limited until you defeat Briar, at which point it becomes Extended Swap.
+* **Unlocked**: Extended Swap is available as soon as you get the Swap item.
+* **Progressive**: There are two "Progressive Swap" items in the pool. The first gives you limited Swap, and the second gives you Extended Swap.
+
+Extended Swap expands the swappable areas to include terrain near postgame content. This allows you to use Swap to access these areas, without completely destroying logic. The rest of this document shows the swappable regions available to you when you have Extended Swap.
 
 ## Apartment
 This map has the vanilla pre-Briar behavior, i.e. you can only swap in the post-boss room.

@@ -14,7 +14,7 @@ namespace AnodyneArchipelago
                     case "APARTMENT": return new() { new Rectangle(1280, 1120, 161, 161) };
                     case "BEACH": return new() {
                         new Rectangle(336, 160, 48, 48),     // Secret glen
-                        new Rectangle(0, 768, 48, 48),       // Left edge, to get out of bounds
+                        new Rectangle(0, 736, 160, 160),     // Left edge, to get out of bounds
                         new Rectangle(688, 1072, 48, 64),    // Bottom edge, to get to secret chest
                     };
                     case "BEDROOM": return new() { new Rectangle(832, 368, 256, 416) };
@@ -22,7 +22,11 @@ namespace AnodyneArchipelago
                         new Rectangle(0, 0, 480, 960),       // Left half
                         new Rectangle(640, 0, 320, 1120),    // Right half
                     };
-                    case "CELL": return new() { new Rectangle(160, 320, 160, 160) };
+                    case "CELL": return new() {
+                        // This is basically all of the map except for the outer walls, the 24 Card Gate area, and the gauntlet
+                        new Rectangle(16, 16, 1248, 704),
+                        new Rectangle(16, 720, 768, 544),
+                    };
                     case "CIRCUS": return new() { new Rectangle(1120, 0, 161, 161) };
                     case "DRAWER": return new() { new Rectangle(0, 0, 960, 1440) };
                     case "FIELDS": return new() {
@@ -42,7 +46,7 @@ namespace AnodyneArchipelago
                         new Rectangle(480, 80, 160, 48),     // Roof secret
                     };
                     case "OVERWORLD": return new() { new Rectangle(16, 480, 272, 176) };
-                    case "REDSEA": return new() { new Rectangle(160, 800, 160, 160) };
+                    case "REDSEA": return new() { new Rectangle(480, 976, 160, 112) };
                     case "SUBURB": return new() { new Rectangle(320, 640, 160, 160) };
                     case "STREET": return new() { new Rectangle(160, 864, 160, 160) };
                     case "SPACE": return new() { new Rectangle(800, 640, 160, 160) };
